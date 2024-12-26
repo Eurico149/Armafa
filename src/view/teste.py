@@ -1,24 +1,28 @@
-
 import tkinter as tk
 from tkinter import ttk
 
-def criar_interface():
+def criar_layout():
     root = tk.Tk()
-    root.title("Alterar Tamanho da Fonte no Botão")
+    root.geometry("400x200")  # Definindo o tamanho da janela
 
-    # Criando o estilo personalizado para o botão
-    estilo = ttk.Style()
+    # Configurando o grid para garantir o ajuste adequado
+    root.grid_columnconfigure(0, weight=1)  # A primeira coluna terá peso 1
+    root.grid_columnconfigure(1, weight=1)  # A segunda coluna terá peso 1
+    root.grid_columnconfigure(2, weight=0)  # A terceira coluna não se expandirá
+    root.grid_rowconfigure(0, weight=1)     # Linha 0 terá peso 1
+    root.grid_rowconfigure(1, weight=0)     # Linha 1 não se expandirá
 
-    # Definindo o estilo da fonte com tamanho grande
-    estilo.configure("Custom.TButton",
-                     font=("Arial", 10),  # Fonte Arial, tamanho 20
-                     foreground="white",
-                     background="blue")
+    # Botões centralizados
+    botao_esquerdo = ttk.Button(root, text="Botão Esquerdo")
+    botao_esquerdo.grid(row=0, column=0, padx=10, pady=20, sticky="ew")
 
-    # Criando o botão com o estilo personalizado
-    botao1 = ttk.Button(root, text="Botão com Fonte Grande", style="Custom.TButton")
-    botao1.pack(padx=20, pady=20)
+    botao_direito = ttk.Button(root, text="Botão Direito")
+    botao_direito.grid(row=0, column=1, padx=10, pady=20, sticky="ew")
+
+    # Botão na ponta direita
+    botao_ponta_direita = ttk.Button(root, text="Botão Ponta Direita")
+    botao_ponta_direita.grid(row=1, column=2, padx=10, pady=10, sticky="e")
 
     root.mainloop()
 
-criar_interface()
+criar_layout()

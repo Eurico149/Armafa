@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from Pedidos import Pedidos
+from Produtos_GUI import Produtos_GUI
 
 class App(tk.Frame):
     def __init__(self, master=None):
@@ -15,24 +15,29 @@ class App(tk.Frame):
         self.master.configure(bg="gray25")
 
     def aplly_widgets(self):
-        self.master.grid_rowconfigure(0, weight=1)
-        self.master.grid_rowconfigure(1, weight=100)
-        self.master.grid_columnconfigure(0, weight=1)
-        self.master.grid_columnconfigure(1, weight=1)
+        self.master.grid_rowconfigure(0, weight=10)
+        self.master.grid_columnconfigure(0, weight=30)
+        self.master.grid_rowconfigure(1, weight=30)
+        self.master.grid_columnconfigure(1, weight=30)
+        self.master.grid_rowconfigure(2, weight=10)
 
         estilo_botao_fechar = ttk.Style()
         estilo_botao_fechar.configure("Custom.TButton", background="firebrick2", foreground="black", font=("Arial", 20))
 
-        fechar = ttk.Button(self.master, text="X", command=self.master.destroy, style="Custom.TButton")
-        fechar.grid(column=1, row=0, padx=10, pady=10, sticky="e")
+        fechar = ttk.Button(self.master, text="X", command=self.master.destroy, style="Custom.TButton", width=3)
+        fechar.grid(column=1, row=0, padx=10, pady=10, sticky="ne")
 
-        botao1 = ttk.Button(self.master, text="Pedidos", command=self.press_pedidos, width=15)
-        botao1.grid(column=0, row=1, pady=80, sticky="n")
-        botao2 = ttk.Button(self.master, text="Produtos", width=15)
-        botao2.grid(column=1, row=1, pady=80, sticky="n")
+        botao1 = ttk.Button(self.master, text="Pedidos", width=18)
+        botao1.grid(column=0, row=1, padx=50, pady=70, sticky="nswe")
 
-    def press_pedidos(self):
-        Pedidos(self.master, self.aplly_widgets)
+        botao2 = ttk.Button(self.master, text="Produtos", width=18, command=self.press_produtos)
+        botao2.grid(column=1, row=1, padx=50, pady=70, sticky="nswe")
+
+        frame = tk.Frame(self.master, height=30, bg="gray25")
+        frame.grid(column=0, row=2)
+
+    def press_produtos(self):
+        Produtos_GUI(self.master, self.aplly_widgets)
 
 
 if __name__ == "__main__":
