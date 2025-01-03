@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-from Produtos_GUI import Produtos_GUI
+from src.view.Produtos_GUI import Produtos_GUI
+
 
 class App(tk.Frame):
     def __init__(self, master=None):
@@ -13,6 +14,7 @@ class App(tk.Frame):
         self.master.geometry("480x270")
         self.master.resizable(False, False)
         self.master.configure(bg="gray25")
+        self.master.iconbitmap("afghanistan.ico")
 
     def aplly_widgets(self):
         self.master.grid_rowconfigure(0, weight=10)
@@ -22,7 +24,7 @@ class App(tk.Frame):
         self.master.grid_rowconfigure(2, weight=10)
 
         estilo_botao_fechar = ttk.Style()
-        estilo_botao_fechar.configure("Custom.TButton", background="firebrick2", foreground="black", font=("Arial", 20))
+        estilo_botao_fechar.configure("Custom.TButton", foreground="black", font=("Arial", 10))
 
         fechar = ttk.Button(self.master, text="X", command=self.master.destroy, style="Custom.TButton", width=3)
         fechar.grid(column=1, row=0, padx=10, pady=10, sticky="ne")
