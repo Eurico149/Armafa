@@ -2,53 +2,51 @@ from src.model.Produto import Produto
 import sqlite3 as sq
 
 
-class Db:
+class Db_pedidos:
     _instancia = None
 
     def __new__(cls):
         if cls._instancia is None:
-            cls._instancia = super(Db, cls).__new__(cls)
+            cls._instancia = super(Db_pedidos, cls).__new__(cls)
         return cls._instancia
 
-    def get_produtos(self, ref=""):
-        consulta = f"SELECT * FROM produtos WHERE nome LIKE '%{ref}%'"
-        if ref.isnumeric():
-            consulta = f"SELECT * FROM produtos WHERE id_pro = {int(ref)}"
+    def get_produtos_by_id(self, ref: int):
+        consulta = f"SELECT * FROM produtos WHERE id_pro={int(ref)}"
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
             res = cur.execute(consulta)
-        produtos = []
-        for i in res:
-            p = Produto(i[0], i[1], i[2])
-            produtos.append(p)
-        return produtos
+        return [Produto(p[0], p[1], p[2]) for p in res]
+
+    def get_produtos_by_name(self, ref: str):
+        consulta = f"SELECT * FROM produtos WHERE nome LIKE '%{ref}%'"
+        with sq.connect("src/data/dataBase.db") as conn:
+            cur = conn.cursor()
+            res = cur.execute(consulta)
+        return [Produto(p[0], p[1], p[2]) for p in res]
 
     def add_produto(self, id_pro, nome, valor):
+        consulta = "INSERT INTO produtos VALUES(?, ?, ?)"
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
             data = (id_pro, nome, valor)
-            cur.execute("INSERT INTO produtos VALUES(?, ?, ?)", data)
+            cur.execute(consulta, data)
 
     def get_produto(self, id_prod):
+        consulta = f"SELECT * FROM produtos WHERE id_pro={id_prod}"
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
-            resu = list(cur.execute(f"SELECT * FROM produtos WHERE id_pro={id_prod}"))[0]
-        return Produto(resu[0], resu[1], resu[2])
+            res = list(cur.execute(consulta))[0]
+        return Produto(res[0], res[1], res[2])
 
     def change_produto(self, id_prod, nome, valor):
+        consulta = "UPDATE produtos SET nome=?, valor=? WHERE id_pro=?"
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
-            cur.execute("UPDATE produtos SET nome=?, valor=? WHERE id_pro=?", (nome, valor, id_prod))
+            cur.execute(consulta, (nome, valor, id_prod))
 
     def del_produto(self, id_pro):
+        consulta = f"DELETE FROM produtos WHERE id_pro={id_pro}"
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
-            cur.execute(f"DELETE FROM produtos WHERE id_pro={id_pro}")
-
-
-
-if __name__ == "__main__":
-    print(Db().get_produtos())
-
-
+            cur.execute(consulta)
 

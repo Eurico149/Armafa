@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, Toplevel, messagebox
-from src.model.Db import Db
+from src.Controller.Produto_controller import Produto_controller as Pc
 
 
 class Produtos_GUI:
@@ -19,13 +19,14 @@ class Produtos_GUI:
         frame = ttk.Frame(self.master)
         scrollbar = tk.Scrollbar(frame, orient=tk.VERTICAL, width=10)
         listbox = tk.Listbox(frame, height=10, width=55, background="gray60", yscrollcommand=scrollbar.set, font=("Courier", 8))
+        scrollbar.config(command=listbox.yview)
 
         busca = ttk.Entry(self.master, width=54)
         busca.grid(column=0, row=1, sticky="ne", pady=5, padx=35)
 
         def atualizar_produtos():
             texto = busca.get()
-            produtos = Db().get_produtos(ref=texto)
+            produtos = Pc().get_produtos(texto)
             lista = listbox.get(0, tk.END)
 
             veri = [str(x) for x in produtos]
@@ -47,13 +48,11 @@ class Produtos_GUI:
 
         atualizar_produtos()
 
-        scrollbar.config(command=listbox.yview)
-
         def change_prod(event):
             index = listbox.curselection()[0]
             selecionado = str(listbox.get(index))
             id_prod = int(selecionado.replace(" ", "").split("|")[0])
-            p = Db().get_produto(id_prod)
+            p = Pc().get_produto(id_prod)
             Produto_changer(self.master, p)
 
 
@@ -130,18 +129,15 @@ class Produto_adder:
         adicionar.grid(row=4, column=2, padx=10, pady=5)
 
     def __add(self, e1, e2, e3):
-        if "," in e3:
-            e3 = e3.replace(",", ".")
-        try:
-            Db().add_produto(int(e1), e2, int(float(e3)*100))
+        if Pc().add_produto(e1, e2, e3):
+            messagebox.showinfo("Armafa", "Produto Adicionado com Sucesso!")
             self.janela.destroy()
             if self.id_pro == "":
                 aux = 1
             else:
-                aux = str(int(self.id_pro)+1)
+                aux = str(int(self.id_pro) + 1)
             Produto_adder(self.master, aux)
-            messagebox.showinfo("Armafa", "Produto Adicionado com Sucesso!")
-        except:
+        else:
             messagebox.showerror("ERROR", "Id, Nome, ou Valor Invalido")
 
 
@@ -188,7 +184,7 @@ class Produto_changer:
         label3.grid(row=0, column=0, sticky="nswe")
         entry3 = ttk.Entry(frame3, background="gray25", width=8)
         entry3.grid(row=0, column=1)
-        entry3.insert(0, str(float(self.produto.valor)/100))
+        entry3.insert(0, f"{float((self.produto.valor)/100):.2f}")
         frame3.grid(row=3, column=1, sticky="w", padx=5, pady=5)
 
         aplicar = ttk.Button(self.janela, text="Aplicar", command=lambda: self.__aplicar(self.produto.id_pro, entry2.get(), entry3.get()))
@@ -198,16 +194,18 @@ class Produto_changer:
         deletar.grid(row=0, column=2, padx=10, pady=10)
 
     def __aplicar(self, e1, e2, e3):
-        try:
-            Db().change_produto(int(e1), e2, float(int(e3)*100))
+        if Pc().mudar_produto(e1, e2, e3):
             messagebox.showinfo("Armafa", "Produto Atualizado com Sucesso")
-        except:
+        else:
             messagebox.showerror("ERROR", "Nome, ou Valor Invalido")
 
     def __deletar(self, id_pro):
-        try:
-            Db().del_produto(id_pro)
+        if Pc().del_produto(id_pro):
             self.janela.destroy()
             messagebox.showinfo("Armafa", "Produto Deletado com Sucesso")
-        except:
+        else:
             messagebox.showerror("ERROR", "Erro Inesperado")
+
+
+
+

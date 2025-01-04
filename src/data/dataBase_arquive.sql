@@ -14,9 +14,11 @@ CREATE TABLE pedidos(
     valor_total INTEGER NOT NULL
 );
 
+-- valor_individual: 1250 == R$12,50
 CREATE TABLE pro_ped(
     id_ped INTEGER NOT NULL,
     id_pro INTEGER NOT NULL,
+    valor_individual INTEGER NOT NULL,
     quantidade INTEGER NOT NULL,
     FOREIGN KEY (id_pro) REFERENCES produtos(id_pro),
     FOREIGN KEY (id_ped) REFERENCES pedidos(id_ped)
