@@ -8,7 +8,7 @@ CREATE TABLE produtos(
 -- valor_total: 1250 == R$12,50
 -- data: dd/mm/aaaa
 CREATE TABLE pedidos(
-    id_ped INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_ped INTEGER PRIMARY KEY,
     cliente VARCHAR(50),
     data CHAR(10),
     valor_total INTEGER NOT NULL

@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, Toplevel, messagebox
+from tkinter.messagebox import showinfo
+
 from src.model.Db import Db
 
 
@@ -63,7 +65,7 @@ class Produtos_GUI:
         listbox.grid(row=0, column=0, sticky="nsew")
         scrollbar.grid(row=0, column=1, sticky="ns")
 
-        adicionar = ttk.Button(self.master, text="+", command=self.__add_produto, width=10)
+        adicionar = ttk.Button(self.master, text="+", width=10, command=lambda: self.__add_produto((listbox.get(tk.END).replace(" ", "")).split("|")[0]))
         adicionar.grid(column=0, row=1, padx=35, sticky="nw")
 
     def __voltar(self):
@@ -74,18 +76,18 @@ class Produtos_GUI:
         for widget in self.master.winfo_children():
             widget.destroy()
 
-    def __add_produto(self):
-        Produto_adder(self.master)
+    def __add_produto(self, id_pro):
+        Produto_adder(self.master, id_pro)
 
 
 class Produto_adder:
 
-    def __init__(self, master):
+    def __init__(self, master, id_pro):
         self.janela = Toplevel(master)
         self.janela.transient(master)
         self.janela.grab_set()
         self.__config_janela()
-        self.__aplly_widgets()
+        self.__aplly_widgets(id_pro)
 
     def __config_janela(self):
         self.janela.title("Armafa")
@@ -94,7 +96,7 @@ class Produto_adder:
         self.janela.configure(bg="gray25")
         self.janela.iconbitmap("afghanistan.ico")
 
-    def __aplly_widgets(self):
+    def __aplly_widgets(self, id_pro):
         tk.Frame(self.janela, height=35, bg="gray25").grid(row=0, column=1)
         tk.Frame(self.janela, width=50, bg="gray25").grid(row=1, column=0)
 
@@ -102,6 +104,8 @@ class Produto_adder:
         label1 = ttk.Label(frame1, text="Id: ", background="gray25", foreground="white", font=("arial", 12))
         label1.grid(row=0, column=0, sticky="nswe")
         entry1 = ttk.Entry(frame1, background="gray25", width=8)
+        entry1.insert(0, str(int(id_pro)+1))
+        entry1.config(state="readonly")
         entry1.grid(row=0, column=1)
         frame1.grid(row=1, column=1, sticky="w", padx=30, pady=5)
 
@@ -157,6 +161,7 @@ class Produto_changer:
         entry1 = ttk.Entry(frame1, background="gray25", width=8)
         entry1.grid(row=0, column=1)
         entry1.insert(0, self.produto.id_pro)
+        entry1.config(state="readonly")
         frame1.grid(row=1, column=1, sticky="w", padx=30, pady=5)
 
         frame2 = ttk.Frame(self.janela)
@@ -175,8 +180,12 @@ class Produto_changer:
         entry3.insert(0, self.produto.valor)
         frame3.grid(row=3, column=1, sticky="w", padx=5, pady=5)
 
-        aplicar = ttk.Button(self.janela, text="aplicar", command=lambda: self.__aplicar(entry1.get(), entry2.get(), entry3.get()))
+        aplicar = ttk.Button(self.janela, text="aplicar", command=lambda: self.__aplicar(self.produto.id_pro, entry2.get(), entry3.get()))
         aplicar.grid(row=4, column=2, padx=10, pady=5)
 
     def __aplicar(self, e1, e2, e3):
-        Db().change_produto(e1, e2, e3)
+        try:
+            Db().change_produto(int(e1), e2, float(int(e3)*100))
+            messagebox.showinfo("Armafa", "Produto Atualizado com Sucesso")
+        except:
+            messagebox.showerror("ERROR", "Nome, ou Valor Invalido")

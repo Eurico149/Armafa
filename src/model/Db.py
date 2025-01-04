@@ -35,7 +35,7 @@ class Db:
     def change_produto(self, id_prod, nome, valor):
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
-            cur.execute("UPDATE produtos SET id_pro=?, nome=?, valor=? WHERE id_pro=?", (id_prod, nome, valor, id_prod))
+            cur.execute("UPDATE produtos SET nome=?, valor=? WHERE id_pro=?", (nome, valor, id_prod))
 
 
 
