@@ -1,7 +1,5 @@
 import tkinter as tk
 from tkinter import ttk, Toplevel, messagebox
-from tkinter.messagebox import showinfo
-
 from src.model.Db import Db
 
 
@@ -94,7 +92,7 @@ class Produto_adder:
         self.janela.geometry("300x180")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
-        self.janela.iconbitmap("afghanistan.ico")
+        #self.janela.iconbitmap("afghanistan.ico")
 
     def __aplly_widgets(self, id_pro):
         tk.Frame(self.janela, height=35, bg="gray25").grid(row=0, column=1)
@@ -149,7 +147,7 @@ class Produto_changer:
         self.janela.geometry("300x180")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
-        self.janela.iconbitmap("afghanistan.ico")
+        #self.janela.iconbitmap("afghanistan.ico")
 
     def __aplly_widgets(self):
         tk.Frame(self.janela, height=35, bg="gray25").grid(row=0, column=1)

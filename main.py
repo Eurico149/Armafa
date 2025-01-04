@@ -1,5 +1,5 @@
 import tkinter as tk
-from view.App import App
+from src.view.App import App
 
 master = tk.Tk()
 root = App(master)
