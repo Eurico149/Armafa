@@ -14,7 +14,7 @@ class App(tk.Frame):
         self.master.geometry("480x270")
         self.master.resizable(False, False)
         self.master.configure(bg="gray25")
-        #self.master.iconbitmap("afghanistan.ico")
+        self.master.iconbitmap("src/data/afghanistan.ico")
 
     def aplly_widgets(self):
         self.master.grid_rowconfigure(0, weight=10)

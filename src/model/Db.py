@@ -11,9 +11,12 @@ class Db:
         return cls._instancia
 
     def get_produtos(self, ref=""):
+        consulta = f"SELECT * FROM produtos WHERE nome LIKE '%{ref}%'"
+        if ref.isnumeric():
+            consulta = f"SELECT * FROM produtos WHERE id_pro = {int(ref)}"
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
-            res = cur.execute(f"SELECT * FROM produtos WHERE nome LIKE '%{ref}%'")
+            res = cur.execute(consulta)
         produtos = []
         for i in res:
             p = Produto(i[0], i[1], i[2])
@@ -36,6 +39,11 @@ class Db:
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
             cur.execute("UPDATE produtos SET nome=?, valor=? WHERE id_pro=?", (nome, valor, id_prod))
+
+    def del_produto(self, id_pro):
+        with sq.connect("src/data/dataBase.db") as conn:
+            cur = conn.cursor()
+            cur.execute(f"DELETE FROM produtos WHERE id_pro={id_pro}")
 
 
 

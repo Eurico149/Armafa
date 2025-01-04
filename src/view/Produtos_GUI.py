@@ -81,20 +81,22 @@ class Produtos_GUI:
 class Produto_adder:
 
     def __init__(self, master, id_pro):
+        self.master = master
         self.janela = Toplevel(master)
         self.janela.transient(master)
         self.janela.grab_set()
+        self.id_pro = id_pro
         self.__config_janela()
-        self.__aplly_widgets(id_pro)
+        self.__aplly_widgets()
 
     def __config_janela(self):
         self.janela.title("Armafa")
         self.janela.geometry("300x180")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
-        #self.janela.iconbitmap("afghanistan.ico")
+        self.janela.iconbitmap("src/data/afghanistan.ico")
 
-    def __aplly_widgets(self, id_pro):
+    def __aplly_widgets(self):
         tk.Frame(self.janela, height=35, bg="gray25").grid(row=0, column=1)
         tk.Frame(self.janela, width=50, bg="gray25").grid(row=1, column=0)
 
@@ -102,7 +104,10 @@ class Produto_adder:
         label1 = ttk.Label(frame1, text="Id: ", background="gray25", foreground="white", font=("arial", 12))
         label1.grid(row=0, column=0, sticky="nswe")
         entry1 = ttk.Entry(frame1, background="gray25", width=8)
-        entry1.insert(0, str(int(id_pro)+1))
+        if self.id_pro == "":
+            entry1.insert(0, "1")
+        else:
+            entry1.insert(0, str(int(self.id_pro)+1))
         entry1.config(state="readonly")
         entry1.grid(row=0, column=1)
         frame1.grid(row=1, column=1, sticky="w", padx=30, pady=5)
@@ -125,8 +130,16 @@ class Produto_adder:
         adicionar.grid(row=4, column=2, padx=10, pady=5)
 
     def __add(self, e1, e2, e3):
+        if "," in e3:
+            e3 = e3.replace(",", ".")
         try:
             Db().add_produto(int(e1), e2, int(float(e3)*100))
+            self.janela.destroy()
+            if self.id_pro == "":
+                aux = 1
+            else:
+                aux = str(int(self.id_pro)+1)
+            Produto_adder(self.master, aux)
             messagebox.showinfo("Armafa", "Produto Adicionado com Sucesso!")
         except:
             messagebox.showerror("ERROR", "Id, Nome, ou Valor Invalido")
@@ -147,7 +160,7 @@ class Produto_changer:
         self.janela.geometry("300x180")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
-        #self.janela.iconbitmap("afghanistan.ico")
+        self.janela.iconbitmap("src/data/afghanistan.ico")
 
     def __aplly_widgets(self):
         tk.Frame(self.janela, height=35, bg="gray25").grid(row=0, column=1)
@@ -175,11 +188,14 @@ class Produto_changer:
         label3.grid(row=0, column=0, sticky="nswe")
         entry3 = ttk.Entry(frame3, background="gray25", width=8)
         entry3.grid(row=0, column=1)
-        entry3.insert(0, self.produto.valor)
+        entry3.insert(0, str(float(self.produto.valor)/100))
         frame3.grid(row=3, column=1, sticky="w", padx=5, pady=5)
 
-        aplicar = ttk.Button(self.janela, text="aplicar", command=lambda: self.__aplicar(self.produto.id_pro, entry2.get(), entry3.get()))
+        aplicar = ttk.Button(self.janela, text="Aplicar", command=lambda: self.__aplicar(self.produto.id_pro, entry2.get(), entry3.get()))
         aplicar.grid(row=4, column=2, padx=10, pady=5)
+
+        deletar = ttk.Button(self.janela, text="Deletar", command=lambda: self.__deletar(self.produto.id_pro))
+        deletar.grid(row=0, column=2, padx=10, pady=10)
 
     def __aplicar(self, e1, e2, e3):
         try:
@@ -187,3 +203,11 @@ class Produto_changer:
             messagebox.showinfo("Armafa", "Produto Atualizado com Sucesso")
         except:
             messagebox.showerror("ERROR", "Nome, ou Valor Invalido")
+
+    def __deletar(self, id_pro):
+        try:
+            Db().del_produto(id_pro)
+            self.janela.destroy()
+            messagebox.showinfo("Armafa", "Produto Deletado com Sucesso")
+        except:
+            messagebox.showerror("ERROR", "Erro Inesperado")
