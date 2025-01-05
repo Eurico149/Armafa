@@ -41,3 +41,9 @@ class Produto_controller:
             return True
         except:
             return False
+
+    def get_max_id(self):
+        saida = list(Db_pedidos().get_max_id())[0][0]
+        if saida is None:
+            return 0
+        return int(saida)

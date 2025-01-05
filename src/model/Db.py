@@ -50,3 +50,10 @@ class Db_pedidos:
             cur = conn.cursor()
             cur.execute(consulta)
 
+    def get_max_id(self):
+        consulta = "SELECT max(id_pro) FROM produtos"
+        with sq.connect("src/data/dataBase.db") as conn:
+            cur = conn.cursor()
+            res = cur.execute(consulta)
+        return res
+

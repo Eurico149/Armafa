@@ -62,7 +62,7 @@ class Produtos_GUI:
         listbox.grid(row=0, column=0, sticky="nsew")
         scrollbar.grid(row=0, column=1, sticky="ns")
 
-        adicionar = ttk.Button(self.master, text="+", width=10, command=lambda: self.__add_produto((listbox.get(tk.END).replace(" ", "")).split("|")[0]))
+        adicionar = ttk.Button(self.master, text="+", width=10, command=self.__add_produto)
         adicionar.grid(column=0, row=1, padx=35, sticky="nw")
 
     def __voltar(self):
@@ -73,18 +73,17 @@ class Produtos_GUI:
         for widget in self.master.winfo_children():
             widget.destroy()
 
-    def __add_produto(self, id_pro):
-        Produto_adder(self.master, id_pro)
+    def __add_produto(self):
+        Produto_adder(self.master)
 
 
 class Produto_adder:
 
-    def __init__(self, master, id_pro):
+    def __init__(self, master):
         self.master = master
         self.janela = Toplevel(master)
         self.janela.transient(master)
         self.janela.grab_set()
-        self.id_pro = id_pro
         self.__config_janela()
         self.__aplly_widgets()
 
@@ -103,10 +102,7 @@ class Produto_adder:
         label1 = ttk.Label(frame1, text="Id: ", background="gray25", foreground="white", font=("arial", 12))
         label1.grid(row=0, column=0, sticky="nswe")
         entry1 = ttk.Entry(frame1, background="gray25", width=8)
-        if self.id_pro == "":
-            entry1.insert(0, "1")
-        else:
-            entry1.insert(0, str(int(self.id_pro)+1))
+        entry1.insert(0, Pc().get_max_id()+1)
         entry1.config(state="readonly")
         entry1.grid(row=0, column=1)
         frame1.grid(row=1, column=1, sticky="w", padx=30, pady=5)
@@ -132,11 +128,7 @@ class Produto_adder:
         if Pc().add_produto(e1, e2, e3):
             messagebox.showinfo("Armafa", "Produto Adicionado com Sucesso!")
             self.janela.destroy()
-            if self.id_pro == "":
-                aux = 1
-            else:
-                aux = str(int(self.id_pro) + 1)
-            Produto_adder(self.master, aux)
+            Produto_adder(self.master)
         else:
             messagebox.showerror("ERROR", "Id, Nome, ou Valor Invalido")
 
