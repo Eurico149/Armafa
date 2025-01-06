@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from src.view.Produtos_GUI import Produtos_GUI
+from src.view.Pedidos_GUI import Pedidos_GUI
 
 
 class App(tk.Frame):
@@ -29,17 +30,20 @@ class App(tk.Frame):
         fechar = ttk.Button(self.master, text="X", command=self.master.destroy, style="Custom.TButton", width=3)
         fechar.grid(column=1, row=0, padx=10, pady=10, sticky="ne")
 
-        botao1 = ttk.Button(self.master, text="Pedidos", width=18)
+        botao1 = ttk.Button(self.master, text="Pedidos", width=18, command=self.__press_pedidos)
         botao1.grid(column=0, row=1, padx=50, pady=70, sticky="nswe")
 
-        botao2 = ttk.Button(self.master, text="Produtos", width=18, command=self.press_produtos)
+        botao2 = ttk.Button(self.master, text="Produtos", width=18, command=self.__press_produtos)
         botao2.grid(column=1, row=1, padx=50, pady=70, sticky="nswe")
 
         frame = tk.Frame(self.master, height=30, bg="gray25")
         frame.grid(column=0, row=2)
 
-    def press_produtos(self):
+    def __press_produtos(self):
         Produtos_GUI(self.master, self.aplly_widgets)
+
+    def __press_pedidos(self):
+        Pedidos_GUI(self.master, self.aplly_widgets)
 
 
 if __name__ == "__main__":

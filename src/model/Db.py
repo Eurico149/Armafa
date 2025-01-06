@@ -1,13 +1,14 @@
 from src.model.Produto import Produto
+from src.model.Pedido import Pedido
 import sqlite3 as sq
 
 
-class Db_pedidos:
+class Db_produtos:
     _instancia = None
 
     def __new__(cls):
         if cls._instancia is None:
-            cls._instancia = super(Db_pedidos, cls).__new__(cls)
+            cls._instancia = super(Db_produtos, cls).__new__(cls)
         return cls._instancia
 
     def get_produtos_by_id(self, ref: int):
@@ -57,3 +58,32 @@ class Db_pedidos:
             res = cur.execute(consulta)
         return res
 
+
+class Db_pedidos:
+    _instancia = None
+
+    def __new__(cls):
+        if cls._instancia is None:
+            cls._instancia = super(Db_pedidos, cls).__new__(cls)
+        return cls._instancia
+
+    def get_pedidos_by_id(self, ref: int):
+        consulta = f"SELECT id_ped, cliente, valor_total, data FROM pedidos WHERE id_ped={int(ref)}"
+        with sq.connect("src/data/dataBase.db") as conn:
+            cur = conn.cursor()
+            res = cur.execute(consulta)
+        return [Pedido(p[0], p[1], p[2], p[3]) for p in res]
+
+    def get_pedidos_by_cliente(self, ref: str):
+        consulta = f"SELECT id_ped, cliente, valor_total, data FROM pedidos WHERE cliente LIKE '%{ref}%'"
+        with sq.connect("src/data/dataBase.db") as conn:
+            cur = conn.cursor()
+            res = cur.execute(consulta)
+        return [Pedido(p[0], p[1], p[2], p[3]) for p in res]
+
+    def get_pedido(self, id_ped):
+        consulta = f"SELECT id_ped, cliente, valor_total, data FROM pedidos WHERE id_ped={id_ped}"
+        with sq.connect("src/data/dataBase.db") as conn:
+            cur = conn.cursor()
+            res = list(cur.execute(consulta))[0]
+        return Pedido(res[0], res[1], res[2], res[3])

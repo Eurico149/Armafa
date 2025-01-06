@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, Toplevel, messagebox
-from src.Controller.Produto_controller import Produto_controller as Pc
+from src.Controller.Produto_controller import Produto_controller as Prc
 
 
 class Produtos_GUI:
@@ -26,7 +26,7 @@ class Produtos_GUI:
 
         def atualizar_produtos():
             texto = busca.get()
-            produtos = Pc().get_produtos(texto)
+            produtos = Prc().get_produtos(texto)
             lista = listbox.get(0, tk.END)
 
             veri = [str(x) for x in produtos]
@@ -52,7 +52,7 @@ class Produtos_GUI:
             index = listbox.curselection()[0]
             selecionado = str(listbox.get(index))
             id_prod = int(selecionado.replace(" ", "").split("|")[0])
-            p = Pc().get_produto(id_prod)
+            p = Prc().get_produto(id_prod)
             Produto_changer(self.master, p)
 
 
@@ -102,7 +102,7 @@ class Produto_adder:
         label1 = ttk.Label(frame1, text="Id: ", background="gray25", foreground="white", font=("arial", 12))
         label1.grid(row=0, column=0, sticky="nswe")
         entry1 = ttk.Entry(frame1, background="gray25", width=8)
-        entry1.insert(0, Pc().get_max_id()+1)
+        entry1.insert(0, Prc().get_max_id()+1)
         entry1.config(state="readonly")
         entry1.grid(row=0, column=1)
         frame1.grid(row=1, column=1, sticky="w", padx=30, pady=5)
@@ -125,7 +125,7 @@ class Produto_adder:
         adicionar.grid(row=4, column=2, padx=10, pady=5)
 
     def __add(self, e1, e2, e3):
-        if Pc().add_produto(e1, e2, e3):
+        if Prc().add_produto(e1, e2, e3):
             messagebox.showinfo("Armafa", "Produto Adicionado com Sucesso!")
             self.janela.destroy()
             Produto_adder(self.master)
@@ -186,13 +186,13 @@ class Produto_changer:
         deletar.grid(row=0, column=2, padx=10, pady=10)
 
     def __aplicar(self, e1, e2, e3):
-        if Pc().mudar_produto(e1, e2, e3):
+        if Prc().mudar_produto(e1, e2, e3):
             messagebox.showinfo("Armafa", "Produto Atualizado com Sucesso")
         else:
             messagebox.showerror("ERROR", "Nome, ou Valor Invalido")
 
     def __deletar(self, id_pro):
-        if Pc().del_produto(id_pro):
+        if Prc().del_produto(id_pro):
             self.janela.destroy()
             messagebox.showinfo("Armafa", "Produto Deletado com Sucesso")
         else:
