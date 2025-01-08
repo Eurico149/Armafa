@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, Toplevel, messagebox
-from src.Controller.Produto_controller import Produto_controller as Prc
+from src.controller.Produto_controller import Produto_controller as Prc
 
 
 class Produtos_GUI:
@@ -22,7 +22,7 @@ class Produtos_GUI:
         scrollbar.config(command=listbox.yview)
 
         busca = ttk.Entry(self.master, width=54)
-        busca.grid(column=0, row=1, sticky="ne", pady=5, padx=35)
+        busca.grid(column=0, row=1, sticky="ne", pady=5, padx=40)
 
         def atualizar_produtos():
             texto = busca.get()
@@ -58,12 +58,12 @@ class Produtos_GUI:
 
         listbox.bind("<Double-1>", change_prod)
 
-        frame.grid(column=0, row=1, padx=30, pady=13)
+        frame.grid(column=0, row=1, padx=40, pady=13)
         listbox.grid(row=0, column=0, sticky="nsew")
         scrollbar.grid(row=0, column=1, sticky="ns")
 
         adicionar = ttk.Button(self.master, text="+", width=10, command=self.__add_produto)
-        adicionar.grid(column=0, row=1, padx=35, sticky="nw")
+        adicionar.grid(column=0, row=1, padx=40, sticky="nw")
 
     def __voltar(self):
         self.__destruir()
@@ -101,8 +101,9 @@ class Produto_adder:
         frame1 = ttk.Frame(self.janela)
         label1 = ttk.Label(frame1, text="Id: ", background="gray25", foreground="white", font=("arial", 12))
         label1.grid(row=0, column=0, sticky="nswe")
-        entry1 = ttk.Entry(frame1, background="gray25", width=8)
-        entry1.insert(0, Prc().get_max_id()+1)
+        entry1 = ttk.Entry(frame1, background="gray25", width=4)
+        max_id = str(Prc().get_max_id()+1)
+        entry1.insert(0, "0" * (4 - len(max_id)) + max_id)
         entry1.config(state="readonly")
         entry1.grid(row=0, column=1)
         frame1.grid(row=1, column=1, sticky="w", padx=30, pady=5)
@@ -157,9 +158,10 @@ class Produto_changer:
         frame1 = ttk.Frame(self.janela)
         label1 = ttk.Label(frame1, text="Id: ", background="gray25", foreground="white", font=("arial", 12))
         label1.grid(row=0, column=0, sticky="nswe")
-        entry1 = ttk.Entry(frame1, background="gray25", width=8)
+        entry1 = ttk.Entry(frame1, background="gray25", width=4)
         entry1.grid(row=0, column=1)
-        entry1.insert(0, self.produto.id_pro)
+        aux = str(self.produto.id_pro)
+        entry1.insert(0, "0" * (4 - len(aux)) + aux)
         entry1.config(state="readonly")
         frame1.grid(row=1, column=1, sticky="w", padx=30, pady=5)
 

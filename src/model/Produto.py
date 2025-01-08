@@ -6,8 +6,8 @@ class Produto:
 
     def __str__(self):
         saida = " "
-        saida += "0" * (3 - len(str(self.id_pro))) + str(self.id_pro) + " | "
-        saida += str(self.nome) + ((36 - len(self.nome)) * " ") + "| "
+        saida += "0" * (4 - len(str(self.id_pro))) + str(self.id_pro) + " | "
+        saida += str(self.nome) + ((37 - len(self.nome)) * " ") + "| "
         saida += "R$" + f"{(self.valor/100):.2f}"
         return saida
 
