@@ -27,7 +27,7 @@ class Db_produtos:
         return [Produto(p[0], p[1], p[2]) for p in res]
 
     def add_produto(self, id_pro, nome, valor):
-        consulta = "INSERT INTO produtos VALUES(?, ?, ?)"
+        consulta = f"INSERT INTO produtos VALUES (?, ?, ?)"
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
             data = (id_pro, nome, valor)

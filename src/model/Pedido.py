@@ -7,7 +7,7 @@ class Pedido:
         self.id_ped = id_ped
         self.cliente = cliente
         self.produtos = produtos
-        self.valor_total = sum([i[0] * (i[1].valor / 100) for i in produtos])
+        self.valor_total = sum([i[0] * i[1].valor for i in produtos])
         self.data = data
 
     def __str__(self):
@@ -15,7 +15,7 @@ class Pedido:
         saida += "0" * (4 - len(str(self.id_ped))) + str(self.id_ped) + " | "
         saida += str(self.cliente.nome) + ((25 - len(self.cliente.nome)) * " ") + "| "
         saida += self.data + " | "
-        saida += "R$" + f"{(self.valor_total/100):.2f}"
+        saida += "R$" + f"{self.valor_total:.2f}"
         return saida
 
     def __eq__(self, other):

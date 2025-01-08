@@ -105,12 +105,12 @@ class Pedido_adder:
         max_id = str(Pec().get_max_id() + 1)
         entry1.insert(0, "0" * (4 - len(max_id)) + max_id)
         entry1.config(state="readonly")
-        frame1.grid(row=0, column=0, padx=20, pady=10)
+        frame1.grid(row=0, column=0, padx=5, pady=10)
 
         frame2 = ttk.Frame(self.janela)
         label2 = ttk.Label(frame2, text="Cliente: ", background="gray25", foreground="white", font=("arial", 12))
         label2.grid(row=0, column=0, sticky="nswe")
-        entry2 = ttk.Entry(frame2, background="gray25", width=15)
+        entry2 = ttk.Entry(frame2, background="gray25", width=20)
         entry2.grid(row=0, column=1)
         frame2.grid(row=0, column=1, padx=30, pady=10)
 
@@ -120,14 +120,14 @@ class Pedido_adder:
         entry3 = ttk.Entry(frame3, background="gray25", width=10)
         entry3.grid(row=0, column=1)
         entry3.insert(0, Pec().get_data_hoje())
-        frame3.grid(row=0, column=2, padx=30, pady=10)
+        frame3.grid(row=0, column=2, padx=35, pady=10)
 
         frame4 = ttk.Frame(self.janela)
         scrollbar1 = tk.Scrollbar(frame4, orient=tk.VERTICAL, width=10)
         listbox1 = tk.Listbox(frame4, height=6, width=55, background="gray60", yscrollcommand=scrollbar1.set, font=("Courier", 8))
         scrollbar1.config(command=listbox1.yview)
 
-        busca = ttk.Entry(frame4, width=66)
+        busca = ttk.Entry(frame4, width=65)
         busca.grid(row=0, column=0, sticky="n", columnspan=2)
 
         def atualizar_produtos():
@@ -181,7 +181,7 @@ class Pedido_adder:
 
         listbox2.bind("<Double-1>", add_prod)
 
-        frame5.grid(column=0, row=2, padx=40, pady=5, columnspan=3)
+        frame5.grid(column=0, row=2, pady=5, columnspan=3)
         listbox2.grid(row=0, column=0, sticky="nsew")
         scrollbar2.grid(row=0, column=1, sticky="ns")
 

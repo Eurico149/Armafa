@@ -3,7 +3,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from src.model.Cliente import Cliente
 from src.model.Pedido import Pedido
-from os import startfile
+from os import startfile, path
 
 
 class PDF_creator:
@@ -11,9 +11,19 @@ class PDF_creator:
     def __init__(self, nome_arquivo: str, cliente: Cliente, pedido: Pedido):
         self.__cliente = cliente
         self.__pedido = pedido
-        self.__nome = nome_arquivo
-        self.__cv = canvas.Canvas(nome_arquivo, pagesize=A4)
+        self.__nome = self.__valida_nome(nome_arquivo)
+        self.__cv = canvas.Canvas(self.__nome, pagesize=A4)
         self.__make_pdf()
+
+    def __valida_nome(self, nome_base):
+        nome, extensao = path.splitext(nome_base)
+        contador = 1
+        nome_unico = nome_base
+
+        while path.exists(nome_unico):
+            nome_unico = f"{nome}({contador}){extensao}"
+            contador += 1
+        return nome_unico
 
     def __make_pdf(self):
         self.__cabecalho()
@@ -30,8 +40,8 @@ class PDF_creator:
                 id_pro = str(self.__pedido.produtos[j][1].id_pro)
                 nome = self.__pedido.produtos[j][1].nome
                 quantidade = str(self.__pedido.produtos[j][0])
-                valor_unidade = "R$"+str(self.__pedido.produtos[j][1].valor / 100)
-                valor_total = "R$"+str(self.__pedido.produtos[j][0] * self.__pedido.produtos[j][1].valor / 100)
+                valor_unidade = f"R${self.__pedido.produtos[j][1].valor:.2f}"
+                valor_total = f"R${(self.__pedido.produtos[j][0] * self.__pedido.produtos[j][1].valor):.2f}"
                 p = [id_pro, nome, quantidade, valor_unidade, valor_total]
 
                 aux = (0, 0, 0, 0)
@@ -57,7 +67,7 @@ class PDF_creator:
                     self.__cv.drawString(22 + sum(col_l[:i + 1]) - col_l[i], altura - 177 - j * h, p[i])
             if j == len(self.__pedido.produtos)-1:
                 self.__cv.roundRect(470, altura - 196 - j * h, col_l[4], h, (0, 0, 5, 5))
-                self.__cv.drawString(472, altura - 192 - j * h, "R$"+str(self.__pedido.valor_total/100))
+                self.__cv.drawString(472, altura - 192 - j * h, f"R${self.__pedido.valor_total:.2f}")
 
                 self.__cv.roundRect(20, altura - 245 - j * h, 300, 60, (5, 5, 5, 5))
                 self.__cv.drawString(22, altura - 195 - j * h, "Observações:")
@@ -65,8 +75,6 @@ class PDF_creator:
                 self.__cv.roundRect(20, altura - 280 - j * h, 554, 30, (5, 5, 5, 5))
                 self.__cv.drawString(22, altura - 269 - j * h, "Vendedor: " + (41 * "_"))
                 self.__cv.drawString(303, altura - 269 - j * h, "Cliente: " + (41 * "_"))
-
-
 
     # limeites largura: 20, 574
     def __cabecalho(self):
@@ -169,5 +177,5 @@ class PDF_creator:
         return largura_inicio + ((largura_fim - largura_inicio) - text_width) / 2
 
     def __salvar(self):
-        startfile(self.__nome)
         self.__cv.save()
+        startfile(self.__nome)

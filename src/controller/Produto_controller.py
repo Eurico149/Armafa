@@ -20,7 +20,7 @@ class Produto_controller:
         if valor.count(".") > 1 or (valor.count(".") == 1 and len(valor.split(".")[1]) > 2):
             return False
         try:
-            Db_produtos().add_produto(int(id_pro), nome, int(float(valor)*100))
+            Db_produtos().add_produto(int(id_pro), nome, float(valor))
             return True
         except:
             return False
@@ -35,9 +35,8 @@ class Produto_controller:
     def mudar_produto(self, id_pro, nome, valor):
         if "," in valor:
             valor = valor.replace(",", ".")
-        print(valor)
         try:
-            Db_produtos().change_produto(int(id_pro), nome, float(int(valor)*100))
+            Db_produtos().change_produto(int(id_pro), nome, float(valor))
             return True
         except:
             return False

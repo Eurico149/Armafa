@@ -2,7 +2,7 @@
 CREATE TABLE produtos(
     id_pro INTEGER PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    valor INTEGER NOT NULL
+    valor REAL NOT NULL
 );
 
 -- excluindo em todos menos o email: -, ., ), (, /, \
@@ -32,7 +32,7 @@ CREATE TABLE pedidos(
 CREATE TABLE pro_ped(
     id_ped INTEGER NOT NULL,
     id_pro INTEGER NOT NULL,
-    valor_individual INTEGER NOT NULL,
+    valor_individual REAL NOT NULL,
     quantidade INTEGER NOT NULL,
     FOREIGN KEY (id_pro) REFERENCES produtos(id_pro),
     FOREIGN KEY (id_ped) REFERENCES pedidos(id_ped)

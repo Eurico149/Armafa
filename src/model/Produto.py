@@ -1,5 +1,5 @@
 class Produto:
-    def __init__(self, id_pro: int, nome: str, valor: int):
+    def __init__(self, id_pro: int, nome: str, valor: float):
         self.id_pro = id_pro
         self.nome = nome
         self.valor = valor
@@ -8,7 +8,7 @@ class Produto:
         saida = " "
         saida += "0" * (4 - len(str(self.id_pro))) + str(self.id_pro) + " | "
         saida += str(self.nome) + ((37 - len(self.nome)) * " ") + "| "
-        saida += "R$" + f"{(self.valor/100):.2f}"
+        saida += "R$" + f"{self.valor:.2f}"
         return saida
 
     def __eq__(self, other):
