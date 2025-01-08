@@ -37,3 +37,8 @@ CREATE TABLE pro_ped(
     FOREIGN KEY (id_pro) REFERENCES produtos(id_pro),
     FOREIGN KEY (id_ped) REFERENCES pedidos(id_ped)
 );
+
+CREATE VIEW pedido_quantidade_produto AS
+SELECT pp.id_ped, pp.id_pro, pro.nome, pp.quantidade, pp.valor_individual
+FROM pedidos AS ped, produtos AS pro, pro_ped AS pp
+WHERE ped.id_ped=pp.id_ped AND pp.id_pro=pro.id_pro GROUP BY pp.id_pro;

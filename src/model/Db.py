@@ -47,11 +47,11 @@ class Db_produtos:
             cur.execute(consulta, (nome, valor, id_prod))
 
     def get_produtos(self, id_ped: int):
-        consulta = f"SELECT * FROM pedidos, pro_ped WHERE pro_ped.id_ped={id_ped} AND pedidos.id_ped={id_ped}"
+        consulta = f"SELECT quantidade, id_pro, nome, valor_individual FROM pedido_quantidade_produto WHERE id_ped={id_ped}"
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
             res = cur.execute(consulta)
-        return [Produto(p[0], p[1], p[2]) for p in res]
+        return [(int(p[0]), Produto(int(p[1]), p[2], int(p[3]))) for p in res]
 
     def del_produto(self, id_pro):
         consulta = f"DELETE FROM produtos WHERE id_pro={id_pro}"
@@ -75,34 +75,37 @@ class Db_pedidos:
             cls._instancia = super(Db_pedidos, cls).__new__(cls)
         return cls._instancia
 
-    # errado: deve adicionar as informações dor produtos a tabela pro_ped
-    """def add_pedido(self, id_ped: int, id_cli: int, data: str, valor_total: int):
-        consulta = "INSERT INTO clientes VALUES(?, ?, ?, ?)"
+    def add_pedido(self, id_ped: int, id_cli: int, data: str):
+        consulta = "INSERT INTO pedido VALUES(?, ?, ?, ?)"
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
             data = (id_ped, id_cli, data)
-            cur.execute(consulta, data)"""
+            cur.execute(consulta, data)
 
-    def get_prod_ped(self):
-        pass
+    def add_pro_pedido(self, id_ped: int, id_pro: int, valor: int, quantidade: int):
+        consulta = "INSERT INTO pro_ped VALUES(?, ?, ?, ?)"
+        with sq.connect("src/data/dataBase.db") as conn:
+            cur = conn.cursor()
+            data = (id_ped, id_pro, valor, quantidade)
+            cur.execute(consulta, data)
 
     def get_pedidos_by_id(self, ref: int):
-        consulta = f"SELECT id_ped, id_cli, data FROM pedidos WHERE id_ped={int(ref)}"
+        consulta = f"SELECT id_ped, id_cli, data FROM pedidos WHERE id_ped={ref}"
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
             res = list(cur.execute(consulta))
         return [Pedido(int(p[0]), Db_clientes().get_cliente(int(p[1])), p[2], []) for p in res]
 
     # errado: deve dar o nome do cliente e relacionar com o bd
-    """def get_pedidos_by_cliente(self, ref: str):
-        consulta = f"SELECT id_ped, cliente, data FROM pedidos WHERE cliente LIKE '%{ref}%'"
+    def get_pedidos_by_cliente(self, ref: str):
+        consulta = f"SELECT id_ped, id_cli, data FROM pedidos WHERE id_cli LIKE '%{ref}%'"
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
             res = cur.execute(consulta)
-        return [Pedido(p[0],  Db_clientes.get_cliente(res[1]), p[2], p[3], []) for p in res]"""
+        return [Pedido(p[0], Db_clientes().get_cliente(p[1]), p[2], []) for p in res]
 
     def get_pedido(self, id_ped):
-        consulta = f"SELECT id_ped, id_cli, valor_total, data FROM pedidos WHERE id_ped={id_ped}"
+        consulta = f"SELECT id_ped, id_cli, data FROM pedidos WHERE id_ped={id_ped}"
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
             res = list(cur.execute(consulta))[0]
