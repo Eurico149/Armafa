@@ -76,7 +76,7 @@ class Db_pedidos:
         return cls._instancia
 
     def add_pedido(self, id_ped: int, id_cli: int, data: str):
-        consulta = "INSERT INTO pedido VALUES(?, ?, ?, ?)"
+        consulta = "INSERT INTO pedido VALUES(?, ?, ?)"
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
             data = (id_ped, id_cli, data)

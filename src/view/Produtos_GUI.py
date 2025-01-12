@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, Toplevel, messagebox
 from src.controller.Produto_controller import Produto_controller as Prc
+from src.model.Produto import Produto
 
 
 class Produtos_GUI:
@@ -16,13 +17,18 @@ class Produtos_GUI:
         voltar = ttk.Button(self.master, text="Voltar", command=self.__voltar)
         voltar.grid(column=0, row=0, padx=10, pady=10, sticky="nw")
 
-        frame = ttk.Frame(self.master)
-        scrollbar = tk.Scrollbar(frame, orient=tk.VERTICAL, width=10)
-        listbox = tk.Listbox(frame, height=10, width=55, background="gray60", yscrollcommand=scrollbar.set, font=("Courier", 8))
+        frame1 = ttk.Frame(self.master)
+        scrollbar = tk.Scrollbar(frame1, orient=tk.VERTICAL, width=10)
+        listbox = tk.Listbox(frame1, height=10, width=55, background="gray60", yscrollcommand=scrollbar.set, font=("Courier", 8))
         scrollbar.config(command=listbox.yview)
 
-        busca = ttk.Entry(self.master, width=54)
-        busca.grid(column=0, row=1, sticky="ne", pady=5, padx=40)
+        frame2 = ttk.Frame(frame1)
+
+        busca = ttk.Entry(frame2, width=53)
+        busca.grid(column=1, row=0, sticky="nsew")
+
+        adicionar = ttk.Button(frame2, text="+", command=self.__add_produto)
+        adicionar.grid(column=0, row=0, sticky="nsew")
 
         def atualizar_produtos():
             texto = busca.get()
@@ -50,20 +56,18 @@ class Produtos_GUI:
 
         def change_prod(event):
             index = listbox.curselection()[0]
-            selecionado = str(listbox.get(index))
-            id_prod = int(selecionado.replace(" ", "").split("|")[0])
-            p = Prc().get_produto(id_prod)
+            selecionado = listbox.get(index)
+            id_pro = int(selecionado.replace(" ", "").split("|")[0])
+            p = Prc().get_produto(id_pro)
             Produto_changer(self.master, p)
 
 
         listbox.bind("<Double-1>", change_prod)
 
-        frame.grid(column=0, row=1, padx=40, pady=13)
-        listbox.grid(row=0, column=0, sticky="nsew")
-        scrollbar.grid(row=0, column=1, sticky="ns")
-
-        adicionar = ttk.Button(self.master, text="+", width=10, command=self.__add_produto)
-        adicionar.grid(column=0, row=1, padx=40, sticky="nw")
+        frame2.grid(column=0 ,row=0, columnspan=2)
+        frame1.grid(column=0, row=1, padx=40, pady=13)
+        listbox.grid(row=1, column=0)
+        scrollbar.grid(row=1, column=1, sticky="ns")
 
     def __voltar(self):
         self.__destruir()
@@ -136,7 +140,7 @@ class Produto_adder:
 
 class Produto_changer:
 
-    def __init__(self, master, p):
+    def __init__(self, master, p: Produto):
         self.janela = Toplevel(master)
         self.janela.transient(master)
         self.janela.grab_set()
@@ -178,7 +182,7 @@ class Produto_changer:
         label3.grid(row=0, column=0, sticky="nswe")
         entry3 = ttk.Entry(frame3, background="gray25", width=8)
         entry3.grid(row=0, column=1)
-        entry3.insert(0, f"{float((self.produto.valor)/100):.2f}")
+        entry3.insert(0, f"{self.produto.valor:.2f}")
         frame3.grid(row=3, column=1, sticky="w", padx=5, pady=5)
 
         aplicar = ttk.Button(self.janela, text="Aplicar", command=lambda: self.__aplicar(self.produto.id_pro, entry2.get(), entry3.get()))

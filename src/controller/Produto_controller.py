@@ -35,6 +35,10 @@ class Produto_controller:
     def mudar_produto(self, id_pro, nome, valor):
         if "," in valor:
             valor = valor.replace(",", ".")
+        if valor.count(".") > 1 or (valor.count(".") == 1 and len(valor.split(".")[1]) > 2):
+            return False
+        if nome == "":
+            return False
         try:
             Db_produtos().change_produto(int(id_pro), nome, float(valor))
             return True
@@ -46,3 +50,9 @@ class Produto_controller:
         if saida is None:
             return 0
         return int(saida)
+
+    def extrair_info(self, produtos: str):
+        saida = []
+        for p in produtos.split("|"):
+            saida.append(p.replace(" ", ""))
+        return saida
