@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, Toplevel, messagebox
+from tkinter import ttk, Toplevel, messagebox, StringVar
 from src.controller.Produto_controller import Produto_controller as Prc
 from src.model.Produto import Produto
 
@@ -7,59 +7,41 @@ from src.model.Produto import Produto
 class Produtos_GUI:
 
     def __init__(self, root: tk.Tk, funcao):
-        self.master = root
+        self.__master = root
         self.callback = funcao
         self.__destruir()
+        self.__buscar_var = StringVar()
         self.__aplly_widgets()
 
     def __aplly_widgets(self):
 
-        voltar = ttk.Button(self.master, text="Voltar", command=self.__voltar)
+        voltar = ttk.Button(self.__master, text="Voltar", command=self.__voltar)
         voltar.grid(column=0, row=0, padx=10, pady=10, sticky="nw")
 
-        frame1 = ttk.Frame(self.master)
+        frame1 = ttk.Frame(self.__master)
         scrollbar = tk.Scrollbar(frame1, orient=tk.VERTICAL, width=10)
         listbox = tk.Listbox(frame1, height=10, width=55, background="gray60", yscrollcommand=scrollbar.set, font=("Courier", 8))
         scrollbar.config(command=listbox.yview)
 
         frame2 = ttk.Frame(frame1)
 
-        busca = ttk.Entry(frame2, width=53)
+        self.__buscar_var.trace("w", lambda name, index, value: self.__atualizar_produtos(listbox))
+        busca = ttk.Entry(frame2, width=53, textvariable=self.__buscar_var)
         busca.grid(column=1, row=0, sticky="nsew")
 
         adicionar = ttk.Button(frame2, text="+", command=self.__add_produto)
         adicionar.grid(column=0, row=0, sticky="nsew")
 
-        def atualizar_produtos():
-            texto = busca.get()
-            produtos = Prc().get_produtos(texto)
-            lista = listbox.get(0, tk.END)
-
-            veri = [str(x) for x in produtos]
-            vali = True
-
-            if len(veri) == len(lista):
-                vali = False
-                for j in range(len(veri)):
-                    if veri[j] != list(lista)[j]:
-                        vali = True
-                        break
-
-            if vali:
-                listbox.delete(0, tk.END)
-                for i in produtos:
-                    listbox.insert(tk.END, str(i))
-
-            listbox.after(1000, atualizar_produtos)
-
-        atualizar_produtos()
+        self.__atualizar_produtos(listbox)
 
         def change_prod(event):
             index = listbox.curselection()[0]
             selecionado = listbox.get(index)
             id_pro = int(selecionado.replace(" ", "").split("|")[0])
             p = Prc().get_produto(id_pro)
-            Produto_changer(self.master, p)
+            pc = Produto_changer(self.__master, p)
+            self.__master.wait_window(pc.janela)
+            self.__atualizar_produtos(listbox)
 
 
         listbox.bind("<Double-1>", change_prod)
@@ -69,16 +51,36 @@ class Produtos_GUI:
         listbox.grid(row=1, column=0)
         scrollbar.grid(row=1, column=1, sticky="ns")
 
+    def __atualizar_produtos(self, listbox, *args):
+        texto = self.__buscar_var.get()
+        produtos = Prc().get_produtos(texto)
+        lista = listbox.get(0, tk.END)
+
+        veri = [str(x) for x in produtos]
+        vali = True
+
+        if len(veri) == len(lista):
+            vali = False
+            for j in range(len(veri)):
+                if veri[j] != list(lista)[j]:
+                    vali = True
+                    break
+
+        if vali:
+            listbox.delete(0, tk.END)
+            for i in produtos:
+                listbox.insert(tk.END, str(i))
+
     def __voltar(self):
         self.__destruir()
         self.callback()
 
     def __destruir(self):
-        for widget in self.master.winfo_children():
+        for widget in self.__master.winfo_children():
             widget.destroy()
 
     def __add_produto(self):
-        Produto_adder(self.master)
+        Produto_adder(self.__master)
 
 
 class Produto_adder:
@@ -106,7 +108,7 @@ class Produto_adder:
         label1 = ttk.Label(frame1, text="Id: ", background="gray25", foreground="white", font=("arial", 12))
         label1.grid(row=0, column=0, sticky="nswe")
         entry1 = ttk.Entry(frame1, background="gray25", width=4)
-        max_id = str(Prc().get_max_id()+1)
+        max_id = str(Prc().get_max_id())
         entry1.insert(0, "0" * (4 - len(max_id)) + max_id)
         entry1.config(state="readonly")
         entry1.grid(row=0, column=1)

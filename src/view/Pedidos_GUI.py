@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, Toplevel, messagebox, StringVar
+
+from src.controller.Cliente_contorller import Cliente_controller as Clc
 from src.controller.Pedidos_controller import Pedidos_controller as Pec
 from src.controller.Produto_controller import Produto_controller as Prc
 from src.model.Produto import Produto
@@ -90,6 +92,7 @@ class Pedido_adder():
         self.__master = master
         self.__master.geometry("560x315")
         self.__destruir()
+        self.__bucar_var = StringVar()
         self.__aplly_widgets()
 
     def __aplly_widgets(self):
@@ -104,7 +107,8 @@ class Pedido_adder():
         entry3.insert(0, Pec().get_data_hoje())
 
         frame2 = tk.Frame(frame1, background="gray25")
-        cb = ttk.Combobox(frame2, width=15, values=["a", "b", "c", "a", "b", "c", "a", "b", "c", "a", "b", "c"])
+        cb = ttk.Combobox(frame2, width=15)
+        cb.config(values=Clc().get_clientes(cb.get()))
         cb.insert(0, "Cliente")
         cb.grid(row=0, column=0, sticky="nsew")
         adicionar_cliente = ttk.Button(frame2, text="+", width=3)
@@ -123,32 +127,11 @@ class Pedido_adder():
         listbox1 = tk.Listbox(frame4, height=7, width=55, background="gray60", yscrollcommand=scrollbar1.set, font=("Courier", 8))
         scrollbar1.config(command=listbox1.yview)
 
-        busca = ttk.Entry(frame4, width=65)
+        self.__bucar_var.trace("w", lambda name, index, value: self.__atualizar_produtos(listbox1))
+        busca = ttk.Entry(frame4, width=65, textvariable=self.__bucar_var)
         busca.grid(row=0, column=0, sticky="nsew", columnspan=2)
 
-        def atualizar_produtos():
-            texto = busca.get()
-            produtos = Prc().get_produtos(texto)
-            lista = listbox1.get(0, tk.END)
-
-            veri = [str(x) for x in produtos]
-            vali = True
-
-            if len(veri) == len(lista):
-                vali = False
-                for j in range(len(veri)):
-                    if veri[j] != list(lista)[j]:
-                        vali = True
-                        break
-
-            if vali:
-                listbox1.delete(0, tk.END)
-                for i in produtos:
-                    listbox1.insert(tk.END, str(i))
-
-            listbox1.after(1000, atualizar_produtos)
-
-        atualizar_produtos()
+        self.__atualizar_produtos(listbox1)
 
         def add_prod(event):
             index = listbox1.curselection()[0]
@@ -188,6 +171,26 @@ class Pedido_adder():
         adicionar = ttk.Button(self.__master, text="Adicionar")
         adicionar.grid(column=1, row=2, sticky="se", pady=10, padx=10)
 
+    def __atualizar_produtos(self, listbox):
+        texto = self.__bucar_var.get()
+        produtos = Prc().get_produtos(texto)
+        lista = listbox.get(0, tk.END)
+
+        veri = [str(x) for x in produtos]
+        vali = True
+
+        if len(veri) == len(lista):
+            vali = False
+            for j in range(len(veri)):
+                if veri[j] != list(lista)[j]:
+                    vali = True
+                    break
+
+        if vali:
+            listbox.delete(0, tk.END)
+            for i in produtos:
+                listbox.insert(tk.END, str(i))
+
     def __voltar(self):
         self.__destruir()
         self.__master.geometry("480x270")
@@ -209,6 +212,8 @@ class Quantidade_getter:
         self.quantidade = 0
         self.__p = produto
         self.__master = master
+        self.__ent2_var = StringVar()
+        self.__ent4_var = StringVar()
         self.janela = Toplevel(master)
         self.janela.transient(master)
         self.janela.grab_set()
@@ -221,11 +226,8 @@ class Quantidade_getter:
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
         self.janela.iconbitmap("src/data/afghanistan.ico")
-        self.__ent2_var = StringVar()
-        self.__ent4_var = StringVar()
 
     def __aplly_widgets(self):
-        self.__ent4_var = tk.StringVar()
         tk.Frame(self.janela, height=40, bg="gray25").grid(row=0, column=1)
         tk.Frame(self.janela, width=30, bg="gray25").grid(row=1, column=0)
 
