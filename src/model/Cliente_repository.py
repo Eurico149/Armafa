@@ -31,14 +31,16 @@ class Cliente_repository:
     def get_clientes_by_name(self, ref: str):
         return [c for c in self.__clientes.values() if ref in c.nome]
 
-    def add_cliente(self, id_cli: int, nome: str, cep: str, endereco: str, uf: str, cidade: str, bairro: str, cpf_cnpj: str, fone: str, email: str):
-        consulta = "INSERT INTO clientes VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    def add_cliente(self, c: Cliente):
+        if c.id_cli in self.__clientes:
+            return
+        consulta = f"INSERT INTO clientes VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
-            data = (id_cli, nome, cep, endereco, uf, cidade, bairro, cpf_cnpj, fone, email)
+            data = (c.id_cli, c.nome, c.cep, c.endereco, c.uf, c.cidade, c.bairro, c.cpf_cnpj, c.fone, c.email)
             cur.execute(consulta, data)
 
-        self.__clientes[id_cli] = Cliente(id_cli, nome, cep, endereco, uf, cidade, bairro, cpf_cnpj, fone, email)
+        self.__clientes[c.id_cli] = Cliente(c.id_cli, c.nome, c.cep, c.endereco, c.uf, c.cidade, c.bairro, c.cpf_cnpj, c.fone, c.email)
 
     def del_cliente(self, id_cli):
         consulta = f"DELETE FROM clientes WHERE id_cli={id_cli}"

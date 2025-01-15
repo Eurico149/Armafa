@@ -27,11 +27,12 @@ class Pedido_repository:
         return pedidos
 
     def add_pedido(self, p: Pedido):
-        consulta = "INSERT INTO pedido VALUES(?, ?, ?)"
+        consulta = f"INSERT INTO pedidos VALUES (?, ?, ?)"
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
-            data = (p.id_ped, p.cliente.id_cli, p.data)
+            data = p.id_ped, p.cliente.id_cli, p.data
             cur.execute(consulta, data)
+
 
         self.__pedidos[p.id_ped] = Pedido(p.id_ped, p.cliente, p.data, p.produtos)
 

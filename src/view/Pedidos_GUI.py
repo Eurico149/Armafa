@@ -1,4 +1,5 @@
 import tkinter as tk
+from tabnanny import check
 from tkinter import ttk, Toplevel, messagebox, StringVar
 
 from src.controller.Cliente_contorller import Cliente_controller as Clc
@@ -93,6 +94,7 @@ class Pedido_adder():
         self.__master.geometry("560x315")
         self.__destruir()
         self.__bucar_var = StringVar()
+        self.__pdf_var = tk.IntVar()
         self.__produtos: list[tuple[int, Produto]] = []
         self.__aplly_widgets()
 
@@ -194,8 +196,12 @@ class Pedido_adder():
         listbox2.grid(row=0, column=0, sticky="nsew")
         scrollbar2.grid(row=0, column=1, sticky="ns")
 
-        chkeck_pdf = tk.Checkbutton(self.__master, text="Gerar PDF", background="gray25", foreground="white")
-        chkeck_pdf.grid(row=2, column=1, padx=25)
+        frame6 = tk.Frame(self.__master)
+        check_pdf = tk.Checkbutton(frame6, background="gray25", variable=self.__pdf_var)
+        check_pdf.select()
+        check_pdf.grid(row=0, column=1, sticky="w")
+        ttk.Label(frame6, background="gray25", foreground="white", text="Gerar PDF").grid(row=0, column=0, sticky="nsew")
+        frame6.grid(row=2, column=1, sticky="e", padx=10)
 
         adicionar = ttk.Button(self.__master, text="Adicionar", command=lambda: self.__adicionar(int(text), 1, entry3.get()))
         adicionar.grid(column=1, row=2, sticky="se", pady=10, padx=10)
@@ -230,6 +236,8 @@ class Pedido_adder():
 
     def __adicionar(self, id_ped: int, id_cli: int, data: str):
         Pec().add_pedido(id_ped, id_cli, data, self.__produtos)
+        if self.__pdf_var.get() == 1:
+            Pec().create_pdf(id_ped)
         self.__destruir()
         self.__master.geometry("480x270")
         self.__callback()

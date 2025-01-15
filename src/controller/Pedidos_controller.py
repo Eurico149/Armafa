@@ -1,6 +1,7 @@
 from datetime import datetime
 import pytz
 
+from src.model.Cliente import Cliente
 from src.model.Cliente_repository import Cliente_repository as Clr
 from src.model.Pedido import Pedido
 from src.model.Pedidos_repository import Pedido_repository as Pr
@@ -11,7 +12,20 @@ from src.model.Produto import Produto
 class Pedidos_controller:
 
     def add_pedido(self, id_ped: int, id_cli: int, date: str, p: list[tuple[int, Produto]]):
-        Pr().add_pedido(Pedido(id_ped, Clr().get_cliente(id_cli), date, p))
+        cliente = Cliente(
+            id_cli=1,
+            nome="João Silva",
+            cep="12345-678",
+            endereco="Rua A, 123",
+            uf="SP",
+            cidade="São Paulo",
+            bairro="Centro",
+            cpf_cnpj="123.456.789-00",
+            fone="11-98765-4321",
+            email="joao@exemplo.com"
+        )
+        Clr().add_cliente(cliente)
+        Pr().add_pedido(Pedido(id_ped, cliente, date, p))
 
     def add_pro_pre(self, id_ped, produto: tuple[int, Produto]):
         Pr().add_pro_pre(id_ped, produto)
@@ -38,7 +52,7 @@ class Pedidos_controller:
         dt = datetime.now(formato)
         return dt.strftime("%d/%m/%Y")
 
-    def create_pdf(self, id_cli: int, id_ped: int):
+    def create_pdf(self, id_ped: int):
         pedido = Pr().get_pedido(id_ped)
         nome = str(pedido.id_ped) + "-" + pedido.data + ".pdf"
         PDF_creator(nome, pedido.cliente, pedido)
