@@ -33,11 +33,11 @@ class Pedido_repository:
             data = p.id_ped, p.cliente.id_cli, p.data
             cur.execute(consulta, data)
 
-
         self.__pedidos[p.id_ped] = Pedido(p.id_ped, p.cliente, p.data, p.produtos)
 
         for i in p.produtos:
             self.add_pro_pre(p.id_ped, i)
+        print(p.id_ped, self.__pedidos[p.id_ped].produtos)
 
     def add_pro_pre(self, id_ped: int, produto: tuple[int, Produto]):
         if id_ped in self.__pedidos:
@@ -45,6 +45,7 @@ class Pedido_repository:
             with sq.connect("src/data/dataBase.db") as conn:
                 cur = conn.cursor()
                 data = (id_ped, produto[1].id_pro, produto[1].valor, produto[0])
+                print(data)
                 cur.execute(consulta, data)
             self.__pedidos[id_ped].add_produto(produto)
 
@@ -60,6 +61,7 @@ class Pedido_repository:
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
             res = cur.execute(consulta)
+        print(list(res))
         return [(p[0], Produto(int(p[1]), p[2], float(p[3]))) for p in res]
 
     def get_pedido(self, id_ped: int):

@@ -12,20 +12,7 @@ from src.model.Produto import Produto
 class Pedidos_controller:
 
     def add_pedido(self, id_ped: int, id_cli: int, date: str, p: list[tuple[int, Produto]]):
-        cliente = Cliente(
-            id_cli=1,
-            nome="João Silva",
-            cep="12345678",
-            endereco="Rua A, 123",
-            uf="SP",
-            cidade="São Paulo",
-            bairro="Centro",
-            cpf_cnpj="12345678900",
-            fone="11987654321",
-            email="joao@exemplo.com"
-        )
-        Clr().add_cliente(cliente)
-        Pr().add_pedido(Pedido(id_ped, cliente, date, p))
+        Pr().add_pedido(Pedido(id_ped, Clr().get_cliente(id_cli), date, p))
 
     def add_pro_pre(self, id_ped, produto: tuple[int, Produto]):
         Pr().add_pro_pre(id_ped, produto)
@@ -54,7 +41,7 @@ class Pedidos_controller:
 
     def create_pdf(self, id_ped: int):
         pedido = Pr().get_pedido(id_ped)
-        nome = str(pedido.id_ped) + "-" + pedido.data + ".pdf"
+        nome = str(pedido.id_ped) + "-" + pedido.data.replace("/", "-") + ".pdf"
         PDF_creator(nome, pedido.cliente, pedido)
 
 

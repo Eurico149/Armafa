@@ -62,7 +62,7 @@ class Pedidos_GUI:
         def change_ped(event):
             index = listbox.curselection()[0]
             selecionado = str(listbox.get(index))
-            id_ped = int(selecionado.replace(" ", "").split("|")[0])
+            id_ped = selecionado.replace(" ", "").split("|")[0]
             p = Pec().get_pedidos(id_ped)
             Pedido_changer(self.__master, p)
 

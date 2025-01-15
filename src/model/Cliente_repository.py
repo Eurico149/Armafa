@@ -20,13 +20,12 @@ class Cliente_repository:
             res = cur.execute(consulta)
         saida = {}
         for c in res:
-            saida[int(c[0])] = Cliente(int(c[0]), c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[8], c[9])
+            saida[int(c[0])] = Cliente(c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[8], c[9])
         return saida
 
     def get_cliente(self, id_cli):
         if id_cli in self.__clientes:
-            return [self.__clientes[id_cli]]
-        return []
+            return self.__clientes[id_cli]
 
     def get_clientes_by_name(self, ref: str):
         return [c for c in self.__clientes.values() if ref in c.nome]
