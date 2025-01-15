@@ -15,13 +15,13 @@ class Pedidos_controller:
         cliente = Cliente(
             id_cli=1,
             nome="João Silva",
-            cep="12345-678",
+            cep="12345678",
             endereco="Rua A, 123",
             uf="SP",
             cidade="São Paulo",
             bairro="Centro",
-            cpf_cnpj="123.456.789-00",
-            fone="11-98765-4321",
+            cpf_cnpj="12345678900",
+            fone="11987654321",
             email="joao@exemplo.com"
         )
         Clr().add_cliente(cliente)
