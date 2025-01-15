@@ -93,6 +93,7 @@ class Pedido_adder():
         self.__master.geometry("560x315")
         self.__destruir()
         self.__bucar_var = StringVar()
+        self.__produtos: list[tuple[int, Produto]] = []
         self.__aplly_widgets()
 
     def __aplly_widgets(self):
@@ -111,13 +112,13 @@ class Pedido_adder():
         cb.config(values=Clc().get_clientes(cb.get()))
         cb.insert(0, "Cliente")
         cb.grid(row=0, column=0, sticky="nsew")
-        adicionar_cliente = ttk.Button(frame2, text="+", width=3)
+        adicionar_cliente = ttk.Button(frame2, text="...", width=3)
         adicionar_cliente.grid(row=0, column=1, sticky="nsew")
         frame2.grid(row=1, column=0, columnspan=2, pady=15)
 
         frame1.grid(row=1, column=1)
 
-        aux = str(Pec().get_max_id() + 1)
+        aux = str(Pec().get_max_id())
         text = "0" * (4 - len(aux)) + aux
         label1 = ttk.Label(self.__master, text=f"PEDIDO Nº{text}", background="gray25", foreground="yellow", font=("Segoe UI", 14))
         label1.grid(row=0, column=1, pady=2, sticky="ne")
@@ -140,11 +141,22 @@ class Pedido_adder():
             produto = Prc().get_produto(id_pro)
             qg = Quantidade_getter(self.__master, produto)
             self.__master.wait_window(qg.janela)
-            quantidade = str(qg.quantidade)
-            print(quantidade)
-            selecionado = selecionado[:25] + " | " + (3 - len(quantidade)) * " " + quantidade + " |" + selecionado[45:] + f" | R${600*12:.2f}"
-            listbox2.insert(tk.END, selecionado)
-
+            if not qg.valid:
+                return
+            quantidade = qg.quantidade
+            if quantidade == 0:
+                return
+            for i in range(len(self.__produtos)):
+                if id_pro == self.__produtos[i][1].id_pro:
+                    nova_qtd = self.__produtos[i][0] + quantidade
+                    self.__produtos[i] = (nova_qtd, produto)
+                    listbox2.delete(i)
+                    str_p = self.__format_listbox(produto, nova_qtd)
+                    listbox2.insert(i, str_p)
+                    return
+            self.__produtos.append((quantidade, produto))
+            str_p = self.__format_listbox(produto, quantidade)
+            listbox2.insert(tk.END, str_p)
 
         listbox1.bind("<Double-1>", add_prod)
 
@@ -157,19 +169,44 @@ class Pedido_adder():
         listbox2 = tk.Listbox(frame5, height=7, width=55, background="gray60", yscrollcommand=scrollbar2.set, font=("Courier", 8))
         scrollbar1.config(command=listbox1.yview)
 
-        """def add_prod(event):
+        def del_prod(event):
             index = listbox2.curselection()[0]
-            selecionado = str(listbox1.get(index))
-            id_prod = int(selecionado.replace(" ", "").split("|")[0])
+            id_pro = int(listbox1.get(index).replace(" ", "").split("|")[0])
+            p = Prc().get_produto(id_pro)
+            pc = Produto_changer(self.__master, (self.__produtos[index][0], p))
+            self.__master.wait_window(pc.janela)
+            if pc.valid is None:
+                return
+            if pc.valid:
+                if pc.quantidade < 1:
+                    return
+                self.__produtos[index] = (pc.quantidade, p)
+                listbox2.delete(index)
+                listbox2.insert(index, self.__format_listbox(p, pc.quantidade))
+            else:
+                if messagebox.askyesno("Comfirmação", f"Tem Certeza que Deseja Retirar {p.nome} do pedido?"):
+                    self.__produtos.pop(index)
+                    listbox2.delete(index)
 
-        listbox2.bind("<Double-1>", add_prod)"""
+        listbox2.bind("<Double-1>", del_prod)
 
         frame5.grid(column=0, row=2)
         listbox2.grid(row=0, column=0, sticky="nsew")
         scrollbar2.grid(row=0, column=1, sticky="ns")
 
-        adicionar = ttk.Button(self.__master, text="Adicionar")
+        chkeck_pdf = tk.Checkbutton(self.__master, text="Gerar PDF", background="gray25", foreground="white")
+        chkeck_pdf.grid(row=2, column=1, padx=25)
+
+        adicionar = ttk.Button(self.__master, text="Adicionar", command=lambda: self.__adicionar(int(text), 1, entry3.get()))
         adicionar.grid(column=1, row=2, sticky="se", pady=10, padx=10)
+
+    def __format_listbox(self, produto: Produto, quantidade: int):
+        str_p = " " + ((4 - len(str(produto.id_pro))) * "0" + str(produto.id_pro))
+        str_p += " | " + produto.nome[0:15] + (15 - len(produto.nome)) * " "
+        str_p += " | " + (4 - len(str(quantidade))) * " " + str(quantidade)
+        str_p += " | " + (3 - len(str(int(produto.valor)))) * " " + f"R${produto.valor:.2f}"
+        str_p += f" | R${quantidade*produto.valor:.2f}"
+        return str_p
 
     def __atualizar_produtos(self, listbox):
         texto = self.__bucar_var.get()
@@ -190,6 +227,12 @@ class Pedido_adder():
             listbox.delete(0, tk.END)
             for i in produtos:
                 listbox.insert(tk.END, str(i))
+
+    def __adicionar(self, id_ped: int, id_cli: int, data: str):
+        Pec().add_pedido(id_ped, id_cli, data, self.__produtos)
+        self.__destruir()
+        self.__master.geometry("480x270")
+        self.__callback()
 
     def __voltar(self):
         self.__destruir()
@@ -218,6 +261,7 @@ class Quantidade_getter:
         self.janela.transient(master)
         self.janela.grab_set()
         self.__config_janela()
+        self.valid = False
         self.__aplly_widgets()
 
     def __config_janela(self):
@@ -264,14 +308,112 @@ class Quantidade_getter:
 
         frame2.grid(row=2, column=1, sticky="w", padx=40, pady=10)
 
+        adicionar = ttk.Button(self.janela, text="Adicionar", command=self.__validate)
+        adicionar.grid(row=3, column=1, pady=35, sticky="e", padx=35)
+
+    def __validate(self):
+        self.valid = True
+        self.janela.destroy()
+
     def __atualiza_valor(self, *args):
         if not self.__ent2_var.get() == "":
-            self.__ent4_var.set(f"R${int(self.__ent2_var.get()) * self.__p.valor:.2f}")
+            self.quantidade = int(self.__ent2_var.get())
+            self.__ent4_var.set(f"R${self.quantidade * self.__p.valor:.2f}")
         else:
             self.__ent4_var.set("R$0.00")
 
     def __validar_int(self, P):
         if P == "" or P.isdigit():
+            return True
+        else:
+            return False
+
+class Produto_changer:
+
+    def __init__(self, master, p: tuple[int, Produto]):
+        self.quantidade = 0
+        self.__p = p
+        self.__master = master
+        self.__ent2_var = StringVar()
+        self.__ent4_var = StringVar()
+        self.janela = Toplevel(master)
+        self.janela.transient(master)
+        self.janela.grab_set()
+        self.__config_janela()
+        self.valid = None
+        self.__aplly_widgets()
+
+    def __config_janela(self):
+        self.janela.title("Armafa")
+        self.janela.geometry("300x180")
+        self.janela.resizable(False, False)
+        self.janela.configure(bg="gray25")
+        self.janela.iconbitmap("src/data/afghanistan.ico")
+
+    def __aplly_widgets(self):
+        tk.Frame(self.janela, height=40, bg="gray25").grid(row=0, column=1)
+        tk.Frame(self.janela, width=30, bg="gray25").grid(row=1, column=0)
+
+        frame1 = tk.Frame(self.janela)
+
+        ttk.Label(frame1, foreground="white", text="Produto: ", font=("Segoe UI", 12), background="gray25").grid(row=0, column=0)
+        entry1 = ttk.Entry(frame1)
+        entry1.insert(0, self.__p[1].nome)
+        entry1.config(state="readonly")
+        entry1.grid(row=0, column=1)
+
+        frame1.grid(row=1, column=1, sticky="w", pady=10)
+
+        frame2 = tk.Frame(self.janela, background="gray25")
+
+        ttk.Label(frame2, foreground="white", text="Qtd.", background="gray25").grid(row=0, column=0, sticky="nsew")
+        self.__ent2_var.trace("w", self.__atualiza_valor)
+        valalidar_ent = self.janela.register(self.__validar_int)
+        entry2 = ttk.Entry(frame2, validate="key", validatecommand=(valalidar_ent, "%P"), width=4, textvariable=self.__ent2_var)
+        entry2.insert(0, str(self.__p[0]))
+        entry2.grid(row=0, column=1)
+
+        ttk.Label(frame2, text=" X ", background="gray25", foreground="white").grid(row=0, column=2)
+        entry3 = ttk.Entry(frame2, width=8)
+        entry3.insert(0, f"R${self.__p[1].valor:.2f}")
+        entry3.config(state="readonly")
+        entry3.grid(row=0, column=3)
+
+        entry4 = ttk.Entry(frame2, width=10, textvariable=self.__ent4_var)
+        entry4.config(state="readonly")
+        ttk.Label(frame2, text=" = ", foreground="white", background="gray25").grid(row=0, column=4)
+        entry4.grid(row=0, column=5)
+
+        frame2.grid(row=2, column=1, sticky="w", padx=40)
+
+        adicionar = ttk.Button(self.janela, text="OK", command=self.__validate)
+        adicionar.grid(row=3, column=1, pady=35, sticky="e", padx=35)
+
+        deletar = ttk.Button(self.janela, text="Deletar", command=self.__delete)
+        deletar.grid(row=0, column=1, sticky="e", padx=35)
+
+    def __validate(self):
+        if self.__ent2_var.get() == "":
+            self.valid = True
+            self.janela.destroy()
+            return
+        self.quantidade = int(self.__ent2_var.get())
+        self.valid = True
+        self.janela.destroy()
+
+    def __delete(self):
+        self.valid = False
+        self.janela.destroy()
+
+    def __atualiza_valor(self, *args):
+        if not self.__ent2_var.get() == "":
+            self.quantidade = int(self.__ent2_var.get())
+            self.__ent4_var.set(f"R${self.quantidade * self.__p[1].valor:.2f}")
+        else:
+            self.__ent4_var.set("R$0.00")
+
+    def __validar_int(self, p):
+        if p == "" or p.isdigit():
             return True
         else:
             return False

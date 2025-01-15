@@ -1,10 +1,23 @@
 from datetime import datetime
 import pytz
+
+from src.model.Cliente_repository import Cliente_repository as Clr
+from src.model.Pedido import Pedido
 from src.model.Pedidos_repository import Pedido_repository as Pr
 from src.model.PDF_creator import PDF_creator
+from src.model.Produto import Produto
 
 
 class Pedidos_controller:
+
+    def add_pedido(self, id_ped: int, id_cli: int, date: str, p: list[tuple[int, Produto]]):
+        Pr().add_pedido(Pedido(id_ped, Clr().get_cliente(id_cli), date, p))
+
+    def add_pro_pre(self, id_ped, produto: tuple[int, Produto]):
+        Pr().add_pro_pre(id_ped, produto)
+
+    def get_pro_pre(self, id_ped: int):
+        return Pr().get_pedido(id_ped).produtos
 
     def get_pedidos(self, ref):
         if ref.isnumeric():

@@ -13,5 +13,5 @@ class Produto:
 
     def __eq__(self, other):
         if isinstance(other, Produto):
-            return (self.id_pro == other.id_pro) and (self.nome == other.nome) and (self.valor == other.valor)
+            return self.id_pro == other.id_pro
         return False

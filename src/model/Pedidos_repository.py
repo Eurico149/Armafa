@@ -26,14 +26,27 @@ class Pedido_repository:
             pedidos[int(p[0])] = Pedido(int(p[0]), Cr().get_cliente(int(p[1])), p[2], [])
         return pedidos
 
-    def add_pedido(self, id_ped: int, id_cli: int, date: str):
+    def add_pedido(self, p: Pedido):
         consulta = "INSERT INTO pedido VALUES(?, ?, ?)"
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
-            data = (id_ped, id_cli, date)
+            data = (p.id_ped, p.cliente.id_cli, p.data)
             cur.execute(consulta, data)
 
-        self.__pedidos[id_ped] = Pedido(id_ped, Cr().get_cliente(id_cli), date, [])
+        self.__pedidos[p.id_ped] = Pedido(p.id_ped, p.cliente, p.data, p.produtos)
+
+        for i in p.produtos:
+            self.add_pro_pre(p.id_ped, i)
+
+    def add_pro_pre(self, id_ped: int, produto: tuple[int, Produto]):
+        if id_ped in self.__pedidos:
+            consulta = f"INSERT INTO pro_ped VALUES (?, ?, ?, ?)"
+            with sq.connect("src/data/dataBase.db") as conn:
+                cur = conn.cursor()
+                data = (id_ped, produto[1].id_pro, produto[1].valor, produto[0])
+                cur.execute(consulta, data)
+            self.__pedidos[id_ped].add_produto(produto)
+
 
     def get_pedido_by_id(self, id_ped: int):
         if id_ped in self.__pedidos:

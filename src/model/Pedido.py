@@ -10,6 +10,25 @@ class Pedido:
         self.valor_total = sum([i[0] * i[1].valor for i in produtos])
         self.data = data
 
+    def add_produto(self, produto: tuple[int, Produto]):
+        for i in range(len(self.produtos)):
+            if self.produtos[i][1] == produto[1]:
+                self.produtos[i] = (self.produtos[i][0] + produto[0], produto[1])
+                return
+        self.produtos.append(produto)
+
+    def del_produto(self, id_pro: int):
+        for p in range(len(self.produtos)):
+            if self.produtos[p][1].id_pro == id_pro:
+                self.produtos.pop(p)
+                break
+
+    def change_quantidade_pro(self, id_pro: int, quantidade: int):
+        for p in range(len(self.produtos)):
+            if self.produtos[p][1].id_pro == id_pro:
+                self.produtos[p] = (quantidade, self.produtos[p][1])
+                break
+
     def __str__(self):
         saida = " "
         saida += "0" * (4 - len(str(self.id_ped))) + str(self.id_ped) + " | "

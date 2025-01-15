@@ -10,10 +10,12 @@ class Produto_controller:
         return saida
 
     def get_produto(self, id_pro):
-        return Pr().get_produto(id_pro)[0]
+        saida = Pr().get_produto(id_pro)
+        if len(saida) == 1:
+            return saida[0]
 
     def add_produto(self, id_pro, nome, valor: str):
-        if nome == "":
+        if nome == "" or len(nome) > 36:
             return False
         if "," in valor:
             valor = valor.replace(",", ".")

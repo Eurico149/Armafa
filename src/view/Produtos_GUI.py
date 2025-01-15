@@ -4,6 +4,7 @@ from src.controller.Produto_controller import Produto_controller as Prc
 from src.model.Produto import Produto
 
 
+# Atualizar listbox apos produto adder
 class Produtos_GUI:
 
     def __init__(self, root: tk.Tk, funcao):
@@ -11,6 +12,7 @@ class Produtos_GUI:
         self.callback = funcao
         self.__destruir()
         self.__buscar_var = StringVar()
+        self.listbox = None
         self.__aplly_widgets()
 
     def __aplly_widgets(self):
@@ -20,41 +22,41 @@ class Produtos_GUI:
 
         frame1 = ttk.Frame(self.__master)
         scrollbar = tk.Scrollbar(frame1, orient=tk.VERTICAL, width=10)
-        listbox = tk.Listbox(frame1, height=10, width=55, background="gray60", yscrollcommand=scrollbar.set, font=("Courier", 8))
-        scrollbar.config(command=listbox.yview)
+        self.listbox = tk.Listbox(frame1, height=10, width=55, background="gray60", yscrollcommand=scrollbar.set, font=("Courier", 8))
+        scrollbar.config(command=self.listbox.yview)
 
         frame2 = ttk.Frame(frame1)
 
-        self.__buscar_var.trace("w", lambda name, index, value: self.__atualizar_produtos(listbox))
+        self.__buscar_var.trace("w", self.__atualizar_produtos)
         busca = ttk.Entry(frame2, width=53, textvariable=self.__buscar_var)
         busca.grid(column=1, row=0, sticky="nsew")
 
         adicionar = ttk.Button(frame2, text="+", command=self.__add_produto)
         adicionar.grid(column=0, row=0, sticky="nsew")
 
-        self.__atualizar_produtos(listbox)
+        self.__atualizar_produtos()
 
         def change_prod(event):
-            index = listbox.curselection()[0]
-            selecionado = listbox.get(index)
+            index = self.listbox.curselection()[0]
+            selecionado = self.listbox.get(index)
             id_pro = int(selecionado.replace(" ", "").split("|")[0])
             p = Prc().get_produto(id_pro)
             pc = Produto_changer(self.__master, p)
             self.__master.wait_window(pc.janela)
-            self.__atualizar_produtos(listbox)
+            self.__atualizar_produtos()
 
 
-        listbox.bind("<Double-1>", change_prod)
+        self.listbox.bind("<Double-1>", change_prod)
 
         frame2.grid(column=0 ,row=0, columnspan=2)
         frame1.grid(column=0, row=1, padx=40, pady=13)
-        listbox.grid(row=1, column=0)
+        self.listbox.grid(row=1, column=0)
         scrollbar.grid(row=1, column=1, sticky="ns")
 
-    def __atualizar_produtos(self, listbox, *args):
+    def __atualizar_produtos(self, *args):
         texto = self.__buscar_var.get()
         produtos = Prc().get_produtos(texto)
-        lista = listbox.get(0, tk.END)
+        lista = self.listbox.get(0, tk.END)
 
         veri = [str(x) for x in produtos]
         vali = True
@@ -67,9 +69,9 @@ class Produtos_GUI:
                     break
 
         if vali:
-            listbox.delete(0, tk.END)
+            self.listbox.delete(0, tk.END)
             for i in produtos:
-                listbox.insert(tk.END, str(i))
+                self.listbox.insert(tk.END, str(i))
 
     def __voltar(self):
         self.__destruir()
@@ -80,7 +82,10 @@ class Produtos_GUI:
             widget.destroy()
 
     def __add_produto(self):
-        Produto_adder(self.__master)
+        pa = Produto_adder(self.__master)
+        self.__master.wait_window(pa.janela)
+        self.__atualizar_produtos()
+
 
 
 class Produto_adder:
