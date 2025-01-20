@@ -20,7 +20,7 @@ class Cliente_repository:
             res = cur.execute(consulta)
         saida = {}
         for c in res:
-            saida[int(c[0])] = Cliente(c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[8], c[9])
+            saida[c[0]] = Cliente(c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[8], c[9])
         return saida
 
     def get_cliente(self, id_cli):
@@ -28,7 +28,7 @@ class Cliente_repository:
             return self.__clientes[id_cli]
 
     def get_clientes_by_name(self, ref: str):
-        return [c for c in self.__clientes.values() if ref in c.nome]
+        return [c for c in self.__clientes.values() if ref.lower() in c.nome.lower()]
 
     def add_cliente(self, c: Cliente):
         if c.id_cli in self.__clientes:
@@ -41,8 +41,21 @@ class Cliente_repository:
 
         self.__clientes[c.id_cli] = Cliente(c.id_cli, c.nome, c.cep, c.endereco, c.uf, c.cidade, c.bairro, c.cpf_cnpj, c.fone, c.email)
 
-    def del_cliente(self, id_cli):
+    def del_cliente(self, id_cli: int):
         consulta = f"DELETE FROM clientes WHERE id_cli={id_cli}"
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
             cur.execute(consulta)
+
+        del self.__clientes[id_cli]
+
+    def change_cliente(self, c: Cliente):
+        if not c.id_cli in self.__clientes:
+            return
+        consulta = "UPDATE clientes SET nome=?, cep=?, endereco=?, uf=?, cidade=?, bairro=?, cpf_cnpj=?, fone=?, email=? WHERE id_cli=?"
+        with sq.connect("src/data/dataBase.db") as conn:
+            cur = conn.cursor()
+            data = (c.nome, c.cep, c.endereco, c.uf, c.cidade, c.bairro, c.cpf_cnpj, c.fone, c.email, c.id_cli)
+            cur.execute(consulta, data)
+
+        self.__clientes[c.id_cli] = c

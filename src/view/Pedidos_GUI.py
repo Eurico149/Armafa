@@ -1,5 +1,4 @@
 import tkinter as tk
-from tabnanny import check
 from tkinter import ttk, Toplevel, messagebox, StringVar
 
 from src.controller.Cliente_contorller import Cliente_controller as Clc
@@ -7,6 +6,7 @@ from src.controller.Pedidos_controller import Pedidos_controller as Pec
 from src.controller.Produto_controller import Produto_controller as Prc
 from src.model.Produto import Produto
 from src.model.Pedido import Pedido
+from src.view.Cliente_GUI import Cliente_GUI
 
 
 class Pedidos_GUI:
@@ -15,6 +15,8 @@ class Pedidos_GUI:
         self.__master = root
         self.__callback = funcao
         self.__destruir()
+        self.__buscar_var = StringVar()
+        self.__listbox = None
         self.__aplly_widgets()
 
     def __aplly_widgets(self):
@@ -24,55 +26,54 @@ class Pedidos_GUI:
 
         frame1 = ttk.Frame(self.__master)
         scrollbar = tk.Scrollbar(frame1, orient=tk.VERTICAL, width=10)
-        listbox = tk.Listbox(frame1, height=10, width=55, background="gray60", yscrollcommand=scrollbar.set, font=("Courier", 8))
-        scrollbar.config(command=listbox.yview)
+        self.__listbox = tk.Listbox(frame1, height=10, width=55, background="gray60", yscrollcommand=scrollbar.set, font=("Courier", 8))
+        scrollbar.config(command=self.__listbox.yview)
 
         frame2 = ttk.Frame(frame1)
 
         adicionar = ttk.Button(frame2, text="+", command=self.__add_pedido)
         adicionar.grid(column=0, row=0, sticky="nsew")
 
-        busca = ttk.Entry(frame2, width=53)
+        self.__buscar_var.trace("w", self.__atualizar_pedidos)
+        busca = ttk.Entry(frame2, width=53, textvariable=self.__buscar_var)
         busca.grid(column=1, row=0, sticky="nsew")
 
-        def atualizar_pedidos():
-            texto = busca.get()
-            pedidos = Pec().get_pedidos(texto)
-            lista = listbox.get(0, tk.END)
-
-            veri = [str(x) for x in pedidos]
-            vali = True
-
-            if len(veri) == len(lista):
-                vali = False
-                for j in range(len(veri)):
-                    if veri[j] != list(lista)[j]:
-                        vali = True
-                        break
-
-            if vali:
-                listbox.delete(0, tk.END)
-                for i in pedidos:
-                    listbox.insert(tk.END, str(i))
-
-            listbox.after(1000, atualizar_pedidos)
-
-        atualizar_pedidos()
+        self.__atualizar_pedidos()
 
         def change_ped(event):
-            index = listbox.curselection()[0]
-            selecionado = str(listbox.get(index))
+            index = self.__listbox.curselection()[0]
+            selecionado = str(self.__listbox.get(index))
             id_ped = selecionado.replace(" ", "").split("|")[0]
-            p = Pec().get_pedidos(id_ped)
+            p = Pec().get_pedido(int(id_ped))
             Pedido_changer(self.__master, p)
 
 
-        listbox.bind("<Double-1>", change_ped)
+        self.__listbox.bind("<Double-1>", change_ped)
 
         frame2.grid(column=0, row=0, columnspan=2)
         frame1.grid(column=0, row=1, padx=40, pady=13)
-        listbox.grid(row=1, column=0)
+        self.__listbox.grid(row=1, column=0)
         scrollbar.grid(row=1, column=1, sticky="ns")
+
+    def __atualizar_pedidos(self, *args):
+        texto = self.__buscar_var.get()
+        pedidos = Pec().get_pedidos(texto)
+        lista = self.__listbox.get(0, tk.END)
+
+        veri = [str(x) for x in pedidos]
+        vali = True
+
+        if len(veri) == len(lista):
+            vali = False
+            for j in range(len(veri)):
+                if veri[j] != list(lista)[j]:
+                    vali = True
+                    break
+
+        if vali:
+            self.__listbox.delete(0, tk.END)
+            for i in pedidos:
+                self.__listbox.insert(tk.END, str(i))
 
     def __add_pedido(self):
         Pedido_adder(self.__master, self.__aplly_widgets)
@@ -114,7 +115,7 @@ class Pedido_adder():
         cb.config(values=Clc().get_clientes(cb.get()))
         cb.insert(0, "Cliente")
         cb.grid(row=0, column=0, sticky="nsew")
-        adicionar_cliente = ttk.Button(frame2, text="...", width=3)
+        adicionar_cliente = ttk.Button(frame2, text="...", width=3, command=lambda: Cliente_GUI(self.__master))
         adicionar_cliente.grid(row=0, column=1, sticky="nsew")
         frame2.grid(row=1, column=0, columnspan=2, pady=15)
 
@@ -255,7 +256,11 @@ class Pedido_adder():
 class Pedido_changer:
 
     def __init__(self, master, p: Pedido):
-        pass
+        self.janela = Toplevel(master)
+        self.janela.transient(master)
+        self.janela.grab_set()
+        self.__master = master
+        self.__pedido = p
 
 class Quantidade_getter:
 

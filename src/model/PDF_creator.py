@@ -35,14 +35,23 @@ class PDF_creator:
 
         h = 15
         col_l = [40, 250, 60, 100, 104]
-        for j in range(len(self.__pedido.produtos)):
+        for j in range(len(self.__pedido.produtos)+1):
             for i in range(len(col_l)):
-                id_pro = str(self.__pedido.produtos[j][1].id_pro)
-                nome = self.__pedido.produtos[j][1].nome
-                quantidade = str(self.__pedido.produtos[j][0])
-                valor_unidade = f"R${self.__pedido.produtos[j][1].valor:.2f}"
-                valor_total = f"R${(self.__pedido.produtos[j][0] * self.__pedido.produtos[j][1].valor):.2f}"
-                p = [id_pro, nome, quantidade, valor_unidade, valor_total]
+                if j == 0:
+                    p = ['Código', 'Produto', 'Quantidade', 'Preço Unitário', 'Valor Total']
+                else:
+                    id_pro = "0" * (4 - len(str(self.__pedido.produtos[j-1][1].id_pro))) + str(self.__pedido.produtos[j-1][1].id_pro)
+                    nome = self.__pedido.produtos[j-1][1].nome
+                    quantidade = str(self.__pedido.produtos[j-1][0])
+                    aux_u = f"{self.__pedido.produtos[j-1][1].valor:.2f}".replace(".", ",")
+                    if len(aux_u) > 6:
+                        aux_u = aux_u[0:-6] + "." + aux_u[-6:]
+                    valor_unidade = f"R${aux_u}"
+                    aux_t = f"{(self.__pedido.produtos[j-1][0] * self.__pedido.produtos[j-1][1].valor):.2f}".replace(".", ",")
+                    if len(aux_t) > 6:
+                        aux_t = aux_t[0:-6] + "." + aux_t[-6:]
+                    valor_total = f"R${aux_t}"
+                    p = [id_pro, nome, quantidade, valor_unidade, valor_total]
 
                 aux = (0, 0, 0, 0)
                 if j == 0:
@@ -56,7 +65,7 @@ class PDF_creator:
                     self.__cv.setFillColor(colors.HexColor("#000000"))
                     self.__cv.drawString(22 + sum(col_l[:i + 1]) - col_l[i], altura - 177 - j * h, p[i])
                     self.__cv.setFont("Helvetica", 10)
-                elif j == len(self.__pedido.produtos)-1:
+                elif j == len(self.__pedido.produtos):
                     if i == 0:
                         aux = (0, 0, 5, 0)
                     self.__cv.roundRect(20 + sum(col_l[:i + 1]) - col_l[i], altura - 181 - j * h, col_l[i], h, aux)
@@ -65,9 +74,12 @@ class PDF_creator:
                     aux = (0, 0, 0, 0)
                     self.__cv.roundRect(20 + sum(col_l[:i + 1]) - col_l[i], altura - 181 - j * h, col_l[i], h, aux)
                     self.__cv.drawString(22 + sum(col_l[:i + 1]) - col_l[i], altura - 177 - j * h, p[i])
-            if j == len(self.__pedido.produtos)-1:
+            if j == len(self.__pedido.produtos):
                 self.__cv.roundRect(470, altura - 196 - j * h, col_l[4], h, (0, 0, 5, 5))
-                self.__cv.drawString(472, altura - 192 - j * h, f"R${self.__pedido.valor_total:.2f}")
+                vt = f"{self.__pedido.valor_total:.2f}".replace(".", ",")
+                if len(vt) > 6:
+                    vt = vt[0:-6] + "." + vt[-6:]
+                self.__cv.drawString(472, altura - 192 - j * h, f"R${vt}")
 
                 self.__cv.roundRect(20, altura - 245 - j * h, 300, 60, (5, 5, 5, 5))
                 self.__cv.drawString(22, altura - 195 - j * h, "Observações:")
@@ -137,7 +149,7 @@ class PDF_creator:
 
         # cnpj = "20.031.219/0002-46"
         cnpj = self.__cliente.cpf_cnpj
-        cnpj = cnpj[0:2] + "." + cnpj[2:5] + "." + cnpj[5:8] + "/" + cnpj[8:12] + "-" + cnpj[12:]
+        # cnpj = cnpj[0:2] + "." + cnpj[2:5] + "." + cnpj[5:8] + "/" + cnpj[8:12] + "-" + cnpj[12:]
         self.__cv.drawString(390, altura - 120, "CPF/CNPJ: " + cnpj)
         self.__cv.drawString(438, altura - 121, 26 * "_")
 
@@ -146,7 +158,7 @@ class PDF_creator:
         self.__cv.drawString(66, altura - 136, 43 * "_")
 
         cep = self.__cliente.cep
-        cep = cep[0:5] + "-" + cep[5:]
+        # cep = cep[0:5] + "-" + cep[5:]
         self.__cv.drawString(285, altura - 135, "CEP: " + cep)
         self.__cv.drawString(308, altura - 136, 12 * "_")
 
@@ -162,9 +174,9 @@ class PDF_creator:
         self.__cv.drawString(23, altura - 150, "Bairro: " + bairro)
         self.__cv.drawString(51, altura - 151, 20 * "_")
 
-        # telefone = "(83) 9 8618-1144"
+        # telefone = "(83) 8618-1144"
         telefone = self.__cliente.fone
-        telefone = "(" + telefone[0:2] + ") " + telefone[2] + " " + telefone[3:7] + "-" + telefone[7:]
+        telefone = "(" + telefone[0:2] + ") " + telefone[2:6] + "-" + telefone[6:]
         self.__cv.drawString(158, altura - 150, "Fone: " + telefone)
         self.__cv.drawString(183, altura - 151, 23 * "_")
 

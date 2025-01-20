@@ -37,7 +37,6 @@ class Pedido_repository:
 
         for i in p.produtos:
             self.add_pro_pre(p.id_ped, i)
-        print(p.id_ped, self.__pedidos[p.id_ped].produtos)
 
     def add_pro_pre(self, id_ped: int, produto: tuple[int, Produto]):
         if id_ped in self.__pedidos:
@@ -45,7 +44,6 @@ class Pedido_repository:
             with sq.connect("src/data/dataBase.db") as conn:
                 cur = conn.cursor()
                 data = (id_ped, produto[1].id_pro, produto[1].valor, produto[0])
-                print(data)
                 cur.execute(consulta, data)
             self.__pedidos[id_ped].add_produto(produto)
 
@@ -53,7 +51,6 @@ class Pedido_repository:
     def get_pedido_by_id(self, id_ped: int):
         if id_ped in self.__pedidos:
             return self.__pedidos[id_ped]
-        return []
 
     # pp.id_ped, pp.id_pro, pro.nome, pp.quantidade, pp.valor_individual
     def __get_pedido_produtos(self, id_ped):
@@ -61,15 +58,16 @@ class Pedido_repository:
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
             res = cur.execute(consulta)
-        print(list(res))
         return [(p[0], Produto(int(p[1]), p[2], float(p[3]))) for p in res]
 
     def get_pedido(self, id_ped: int):
+        if not id_ped in self.__pedidos:
+            return
         aux = self.__pedidos[id_ped]
         return Pedido(aux.id_ped, aux.cliente, aux.data, self.__get_pedido_produtos(id_ped))
 
     def get_pedidos_by_cliente(self, ref: str):
-        return [p for p in self.__pedidos.values() if ref in p.cliente.nome]
+        return [p for p in self.__pedidos.values() if ref.lower() in p.cliente.nome.lower()]
 
     def get_max_id(self):
         if len(self.__pedidos) == 0:

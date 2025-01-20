@@ -25,20 +25,19 @@ class Produto_repository:
 
     def get_produto(self, id_pro: int):
         if id_pro in self.__produtos:
-            return [self.__produtos[id_pro]]
-        return []
+            return self.__produtos[id_pro]
 
     def get_produtos_by_name(self, ref: str):
-        return [v for v in self.__produtos.values() if ref in v.nome]
+        return [v for v in self.__produtos.values() if ref.lower() in v.nome.lower()]
 
-    def add_produto(self, id_pro: int, nome: str, valor: float):
+    def add_produto(self, p:  Produto):
         consulta = f"INSERT INTO produtos VALUES (?, ?, ?)"
         with sq.connect("src/data/dataBase.db") as conn:
             cur = conn.cursor()
-            data = (id_pro, nome, valor)
+            data = (p.id_pro, p.nome, p.valor)
             cur.execute(consulta, data)
 
-        self.__produtos[id_pro] = Produto(id_pro, nome, valor)
+        self.__produtos[p.id_pro] = Produto(p.id_pro, p.nome, p.valor)
 
     def change_produto(self, id_prod: int, nome: str, valor: float):
         consulta = "UPDATE produtos SET nome=?, valor=? WHERE id_pro=?"

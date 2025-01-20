@@ -16,17 +16,21 @@ class Pedido:
                 self.produtos[i] = (self.produtos[i][0] + produto[0], produto[1])
                 return
         self.produtos.append(produto)
+        self.valor_total += produto[0] * produto[1].valor
 
     def del_produto(self, id_pro: int):
         for p in range(len(self.produtos)):
             if self.produtos[p][1].id_pro == id_pro:
+                self.valor_total -= self.produtos[p][0] * self.produtos[p][1].valor
                 self.produtos.pop(p)
                 break
 
     def change_quantidade_pro(self, id_pro: int, quantidade: int):
         for p in range(len(self.produtos)):
             if self.produtos[p][1].id_pro == id_pro:
+                self.valor_total -= self.produtos[p][0] * self.produtos[p][1].valor
                 self.produtos[p] = (quantidade, self.produtos[p][1])
+                self.valor_total += self.produtos[p][0] * self.produtos[p][1].valor
                 break
 
     def __str__(self):

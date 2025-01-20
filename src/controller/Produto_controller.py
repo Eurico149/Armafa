@@ -1,3 +1,4 @@
+from src.model.Produto import Produto
 from src.model.Produto_repository import Produto_repository as Pr
 
 class Produto_controller:
@@ -5,14 +6,13 @@ class Produto_controller:
     def get_produtos(self, ref: str):
         if ref.isnumeric():
             saida = Pr().get_produto(int(ref))
-        else:
-            saida = Pr().get_produtos_by_name(ref)
-        return saida
+            if not saida:
+                return []
+            return [saida]
+        return Pr().get_produtos_by_name(ref)
 
     def get_produto(self, id_pro):
-        saida = Pr().get_produto(id_pro)
-        if len(saida) == 1:
-            return saida[0]
+        return Pr().get_produto(id_pro)
 
     def add_produto(self, id_pro, nome, valor: str):
         if nome == "" or len(nome) > 36:
@@ -22,7 +22,7 @@ class Produto_controller:
         if valor.count(".") > 1 or (valor.count(".") == 1 and len(valor.split(".")[1]) > 2):
             return False
         try:
-            Pr().add_produto(int(id_pro), nome, float(valor))
+            Pr().add_produto(Produto(int(id_pro), nome, float(valor)))
             return True
         except:
             return False
@@ -49,10 +49,4 @@ class Produto_controller:
 
     def get_max_id(self):
         saida = Pr().get_max_id() + 1
-        return saida
-
-    def extrair_info(self, produtos: str):
-        saida = []
-        for p in produtos.split("|"):
-            saida.append(p.replace(" ", ""))
         return saida

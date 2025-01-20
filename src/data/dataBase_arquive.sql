@@ -1,7 +1,7 @@
 -- valor: 1250 == R$12,50
 CREATE TABLE produtos(
     id_pro INTEGER PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
+    nome VARCHAR(36) NOT NULL,
     valor REAL NOT NULL
 );
 

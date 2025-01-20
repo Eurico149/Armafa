@@ -20,5 +20,5 @@ class Cliente:
 
     def __eq__(self, other):
         if isinstance(other, Cliente):
-            return (self.cpf_cnpj == other.cpf_cnpj) or (self.id_cli == other.id_cli)
+            return self.id_cli == other.id_cli
         return False

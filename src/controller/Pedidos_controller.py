@@ -11,18 +11,38 @@ from src.model.Produto import Produto
 
 class Pedidos_controller:
 
+    # 12/02/2022
+    def __validar_data(self, data: str):
+        if len(data) != 10:
+            return False
+        if (data[2], data[5]) != ("/", "/") or data.count("/") != 2:
+            return False
+        d = data.split("/")
+        if not (d[0].isdigit() and d[1].isdigit() and d[2].isdigit()):
+            return False
+        if not (12 >= int(d[1]) >= 1):
+            return False
+        if not (31 >= int(d[0]) >= 1):
+            return False
+        if not (4 == len(d[2])):
+            return False
+        return True
+
     def add_pedido(self, id_ped: int, id_cli: int, date: str, p: list[tuple[int, Produto]]):
-        Pr().add_pedido(Pedido(id_ped, Clr().get_cliente(id_cli), date, p))
+        if self.__validar_data(date):
+            Pr().add_pedido(Pedido(id_ped, Clr().get_cliente(id_cli), date, p))
+            return True
+        return False
 
     def add_pro_pre(self, id_ped, produto: tuple[int, Produto]):
         Pr().add_pro_pre(id_ped, produto)
 
-    def get_pro_pre(self, id_ped: int):
-        return Pr().get_pedido(id_ped).produtos
-
     def get_pedidos(self, ref):
-        if ref.isnumeric():
+        if ref.isdigit():
             saida = Pr().get_pedido_by_id(int(ref))
+            if saida is None:
+                return []
+            return [saida]
         else:
             saida = Pr().get_pedidos_by_cliente(ref)
         return saida
@@ -31,8 +51,7 @@ class Pedidos_controller:
         return Pr().get_pedido(id_ped)
 
     def get_max_id(self):
-        saida = Pr().get_max_id() + 1
-        return saida
+        return Pr().get_max_id() + 1
 
     def get_data_hoje(self):
         formato = pytz.timezone('America/Sao_Paulo')
@@ -43,5 +62,3 @@ class Pedidos_controller:
         pedido = Pr().get_pedido(id_ped)
         nome = str(pedido.id_ped) + "-" + pedido.data.replace("/", "-") + ".pdf"
         PDF_creator(nome, pedido.cliente, pedido)
-
-

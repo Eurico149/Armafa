@@ -85,7 +85,10 @@ class Produtos_GUI:
         pa = Produto_adder(self.__master)
         self.__master.wait_window(pa.janela)
         self.__atualizar_produtos()
-
+        while pa.valid:
+            pa = Produto_adder(self.__master)
+            self.__master.wait_window(pa.janela)
+            self.__atualizar_produtos()
 
 
 class Produto_adder:
@@ -96,6 +99,7 @@ class Produto_adder:
         self.janela.transient(master)
         self.janela.grab_set()
         self.__config_janela()
+        self.valid = False
         self.__aplly_widgets()
 
     def __config_janela(self):
@@ -140,7 +144,7 @@ class Produto_adder:
         if Prc().add_produto(e1, e2, e3):
             messagebox.showinfo("Armafa", "Produto Adicionado com Sucesso!")
             self.janela.destroy()
-            Produto_adder(self.master)
+            self.valid = True
         else:
             messagebox.showerror("ERROR", "Id, Nome, ou Valor Invalido")
 
