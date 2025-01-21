@@ -12,7 +12,7 @@ class App(tk.Frame):
 
     def __config_app(self):
         self.master.title("Armafa")
-        self.master.geometry("480x270")
+        self.master.geometry("480x270+400+200")
         self.master.resizable(False, False)
         self.master.configure(bg="gray25")
         self.master.iconbitmap("src/data/afghanistan.ico")
@@ -44,9 +44,3 @@ class App(tk.Frame):
 
     def __press_pedidos(self):
         Pedidos_GUI(self.master, self.aplly_widgets)
-
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = App(root)
-    app.mainloop()

@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from src.controller.Cliente_contorller import Cliente_controller as Clc
 
 
@@ -16,7 +16,7 @@ class Cliente_GUI:
 
     def __config_janela(self):
         self.janela.title("Armafa")
-        self.janela.geometry("480x270")
+        self.janela.geometry("480x270+415+215")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
         self.janela.iconbitmap("src/data/afghanistan.ico")
@@ -79,11 +79,108 @@ class Cliente_GUI:
                 self.listbox.insert(tk.END, str(i))
 
     def __add_cliente(self):
-        """pa = Produto_adder(self.__master)
-        self.__master.wait_window(pa.janela)
-        self.__atualizar_produtos()
-        while pa.valid:
-            pa = Produto_adder(self.__master)
-            self.__master.wait_window(pa.janela)
-            self.__atualizar_produtos()"""
-        pass
+        ca = Cliente_adder(self.__master)
+        self.__master.wait_window(ca.janela)
+        self.__atualizar_clientes()
+        while ca.valid:
+            ca = Cliente_adder(self.__master)
+            self.__master.wait_window(ca.janela)
+            self.__atualizar_clientes()
+
+
+class Cliente_adder:
+
+    def __init__(self, master):
+        self.master = master
+        self.janela = tk.Toplevel(master)
+        self.janela.transient(master)
+        self.janela.grab_set()
+        self.__config_janela()
+        self.valid = False
+        self.__aplly_widgets()
+
+
+    def __config_janela(self):
+        self.janela.title("Armafa - Cliente - Adicionar")
+        self.janela.geometry("480x270+430+230")
+        self.janela.resizable(False, False)
+        self.janela.configure(bg="gray25")
+        self.janela.iconbitmap("src/data/afghanistan.ico")
+
+    def __aplly_widgets(self):
+        frame1 = tk.Frame(self.janela, background="gray25")
+        ttk.Label(frame1, text="Id:", background="gray25", foreground="white", font=("arial", 12)).grid(row=0, column=0, sticky="nswe")
+        entry1 = ttk.Entry(frame1)
+        entry1.grid(row=0, column=1, sticky="nswe")
+        max_id = Clc().get_max_id()
+        entry1.insert(0, "0" * (4-len(str(max_id))) + str(max_id))
+        entry1.config(state="readonly")
+        frame1.grid()
+
+        frame2 = tk.Frame(self.janela, background="gray25")
+        ttk.Label(frame2, text="Nome:", background="gray25", foreground="white", font=("arial", 12)).grid(row=0, column=0, sticky="nswe")
+        entry2 = ttk.Entry(frame2)
+        entry2.grid(row=0, column=1, sticky="nswe")
+        frame2.grid()
+
+        frame3 = tk.Frame(self.janela, background="gray25")
+        ttk.Label(frame3, text="CPF/CNPJ:", background="gray25", foreground="white", font=("arial", 12)).grid(row=0, column=0, sticky="nswe")
+        entry3 = ttk.Entry(frame3)
+        entry3.grid(row=0, column=1, sticky="nswe")
+        frame3.grid()
+
+        frame4 = tk.Frame(self.janela, background="gray25")
+        ttk.Label(frame4, text="UF:", background="gray25", foreground="white", font=("arial", 12)).grid(row=0, sticky="nswe")
+        entry4 = ttk.Entry(frame4)
+        entry4.grid(row=0, column=1, sticky="nswe")
+        frame4.grid()
+
+        frame5 = tk.Frame(self.janela, background="gray25")
+        ttk.Label(frame5, text="Cidade:", background="gray25", foreground="white", font=("arial", 12)).grid(row=0, column=0, sticky="nswe")
+        entry5 = ttk.Entry(frame5)
+        entry5.grid(row=0, column=1, sticky="nswe")
+        frame5.grid()
+
+        frame6 = tk.Frame(self.janela, background="gray25")
+        ttk.Label(frame6, text="CEP:", background="gray25", foreground="white", font=("arial", 12)).grid(row=0, column=0, sticky="nswe")
+        entry6 = ttk.Entry(frame6)
+        entry6.grid(row=0, column=1, sticky="nswe")
+        frame6.grid()
+
+        frame7 = tk.Frame(self.janela, background="gray25")
+        ttk.Label(frame7, text="Bairro:", background="gray25", foreground="white", font=("arial", 12)).grid(row=0, column=0, sticky="nswe")
+        entry7 = ttk.Entry(frame7)
+        entry7.grid(row=0, column=1, sticky="nswe")
+        frame7.grid()
+
+        frame8 = tk.Frame(self.janela, background="gray25")
+        ttk.Label(frame8, text="Endereço:", background="gray25", foreground="white", font=("arial", 12)).grid(row=0, column=0, sticky="nswe")
+        entry8 = ttk.Entry(frame8)
+        entry8.grid(row=0, column=1, sticky="nswe")
+        frame8.grid()
+
+        frame9 = tk.Frame(self.janela, background="gray25")
+        ttk.Label(frame9, text="Fone:", background="gray25", foreground="white", font=("arial", 12)).grid(row=0, column=0, sticky="nswe")
+        entry9 = ttk.Entry(frame9)
+        entry9.grid(row=0, column=1, sticky="nswe")
+        frame9.grid()
+
+        frame10 = tk.Frame(self.janela, background="gray25")
+        ttk.Label(frame10, text="Email:", background="gray25", foreground="white", font=("arial", 12)).grid(row=0, column=0, sticky="nswe")
+        entry10 = ttk.Entry(frame10)
+        entry10.grid(row=0, column=1, sticky="nswe")
+        frame10.grid()
+
+        adicionar = ttk.Button(self.janela, text="Adicionar", command=lambda: self.__add(entry1.get(), entry2.get(), entry6.get(), entry8.get(), entry4.get(), entry5.get(), entry7.get(), entry3.get(), entry9.get(), entry10.get(),))
+        adicionar.grid()
+        # id_cli: int, nome: str, cep: str, endereco: str, uf: str, cidade: str, bairro: str, cpf_cnpj: str, fone: str, email: str
+
+    def __add(self, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10):
+        if Clc().add_cliente(e1, e2, e3, e4, e5, e6, e7, e8, e9, e10):
+            messagebox.showinfo("Armafa", "Cliente Adicionado com Sucesso!")
+            self.janela.destroy()
+            self.valid = True
+        else:
+            messagebox.showerror("ERROR", "Campo Preenchido Invalido!")
+
+

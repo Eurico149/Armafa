@@ -59,3 +59,8 @@ class Cliente_repository:
             cur.execute(consulta, data)
 
         self.__clientes[c.id_cli] = c
+
+    def get_max_id(self):
+        if len(self.__clientes) == 0:
+            return 0
+        return max(self.__clientes.keys())

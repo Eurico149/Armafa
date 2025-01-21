@@ -104,7 +104,7 @@ class Produto_adder:
 
     def __config_janela(self):
         self.janela.title("Armafa")
-        self.janela.geometry("300x180")
+        self.janela.geometry("300x180+630+230")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
         self.janela.iconbitmap("src/data/afghanistan.ico")
@@ -161,7 +161,7 @@ class Produto_changer:
 
     def __config_janela(self):
         self.janela.title("Armafa")
-        self.janela.geometry("300x180")
+        self.janela.geometry("300x180+630+230")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
         self.janela.iconbitmap("src/data/afghanistan.ico")
