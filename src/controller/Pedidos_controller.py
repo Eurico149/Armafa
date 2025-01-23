@@ -1,7 +1,6 @@
 from datetime import datetime
 import pytz
 
-from src.model.Cliente import Cliente
 from src.model.Cliente_repository import Cliente_repository as Clr
 from src.model.Pedido import Pedido
 from src.model.Pedidos_repository import Pedido_repository as Pr
@@ -28,14 +27,34 @@ class Pedidos_controller:
             return False
         return True
 
-    def add_pedido(self, id_ped: int, id_cli: int, date: str, p: list[tuple[int, Produto]]):
+    def add_pedido(self, id_ped: int, id_cli: str, date: str, p: list[tuple[int, Produto]], desconto: int):
+        aux = id_cli.replace(" ", "").split("|")[0]
+        if not aux.isdigit():
+            return False
         if self.__validar_data(date):
-            Pr().add_pedido(Pedido(id_ped, Clr().get_cliente(id_cli), date, p))
+            Pr().add_pedido(Pedido(id_ped, Clr().get_cliente(int(aux)), date, p, desconto))
             return True
         return False
 
+    def change_pedido(self, id_ped: int, id_cli: int, date: str, p: list[tuple[int, Produto]], desconto: int):
+        cliente = Clr().get_cliente(id_cli)
+        if len(p) == 0:
+            return False
+        if cliente is None:
+            return False
+        if not self.__validar_data(date):
+            return False
+        if desconto < 0:
+            return False
+        ped = Pedido(id_ped, cliente, date, p, desconto)
+        Pr().change_pedido(ped)
+        return True
+
     def add_pro_pre(self, id_ped, produto: tuple[int, Produto]):
         Pr().add_pro_pre(id_ped, produto)
+
+    def del_pedido(self, id_ped: int):
+        Pr().del_pedido(id_ped)
 
     def get_pedidos(self, ref):
         if ref.isdigit():

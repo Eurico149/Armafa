@@ -1,17 +1,14 @@
 import sqlite3 as sq
 from src.model.Cliente import Cliente
+from src.model.Singleton import SingletonMeta
 
 
-class Cliente_repository:
-    _instancia = None
-
-    def __new__(cls):
-        if cls._instancia is None:
-            cls._instancia = super(Cliente_repository, cls).__new__(cls)
-        return cls._instancia
+class Cliente_repository(metaclass=SingletonMeta):
 
     def __init__(self):
-        self.__clientes = self.__get_clientes()
+        if not hasattr(self, "_initialized"):
+            self.__clientes = self.__get_clientes()
+            print("clientes")
 
     def __get_clientes(self):
         consulta = "SELECT * FROM clientes"

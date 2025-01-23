@@ -142,11 +142,11 @@ class Produto_adder:
 
     def __add(self, e1, e2, e3):
         if Prc().add_produto(e1, e2, e3):
-            messagebox.showinfo("Armafa", "Produto Adicionado com Sucesso!")
+            messagebox.showinfo("Armafa", "Produto Adicionado com Sucesso!", parent=self.janela)
             self.janela.destroy()
             self.valid = True
         else:
-            messagebox.showerror("ERROR", "Id, Nome, ou Valor Invalido")
+            messagebox.showerror("ERROR", "Id, Nome, ou Valor Invalido", parent=self.janela)
 
 
 class Produto_changer:
@@ -204,16 +204,16 @@ class Produto_changer:
 
     def __aplicar(self, e1, e2, e3):
         if Prc().mudar_produto(e1, e2, e3):
-            messagebox.showinfo("Armafa", "Produto Atualizado com Sucesso")
+            messagebox.showinfo("Armafa", "Produto Atualizado com Sucesso", parent=self.janela)
         else:
-            messagebox.showerror("ERROR", "Nome, ou Valor Invalido")
+            messagebox.showerror("ERROR", "Nome, ou Valor Invalido", parent=self.janela)
 
     def __deletar(self, id_pro):
         if Prc().del_produto(id_pro):
+            messagebox.showinfo("Armafa", "Produto Deletado com Sucesso", parent=self.janela)
             self.janela.destroy()
-            messagebox.showinfo("Armafa", "Produto Deletado com Sucesso")
         else:
-            messagebox.showerror("ERROR", "Erro Inesperado")
+            messagebox.showerror("ERROR", "Erro Inesperado", parent=self.janela)
 
 
 

@@ -22,9 +22,6 @@ class Cliente_GUI:
         self.janela.iconbitmap("src/data/afghanistan.ico")
 
     def __aplly_widgets(self):
-        voltar = ttk.Button(self.janela, text="Voltar")
-        voltar.grid(column=0, row=0, padx=10, pady=10, sticky="nw")
-
         frame1 = ttk.Frame(self.janela)
         scrollbar = tk.Scrollbar(frame1, orient=tk.VERTICAL, width=10)
         self.listbox = tk.Listbox(frame1, height=10, width=55, background="gray60", yscrollcommand=scrollbar.set,
@@ -54,7 +51,7 @@ class Cliente_GUI:
         self.listbox.bind("<Double-1>", change_prod)"""
 
         frame2.grid(column=0, row=0, columnspan=2)
-        frame1.grid(column=0, row=1, padx=40, pady=13)
+        frame1.grid(column=0, row=1, padx=45, pady=40)
         self.listbox.grid(row=1, column=0)
         scrollbar.grid(row=1, column=1, sticky="ns")
 
@@ -177,10 +174,10 @@ class Cliente_adder:
 
     def __add(self, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10):
         if Clc().add_cliente(e1, e2, e3, e4, e5, e6, e7, e8, e9, e10):
-            messagebox.showinfo("Armafa", "Cliente Adicionado com Sucesso!")
+            messagebox.showinfo("Armafa", "Cliente Adicionado com Sucesso!", parent=self.janela)
             self.janela.destroy()
             self.valid = True
         else:
-            messagebox.showerror("ERROR", "Campo Preenchido Invalido!")
+            messagebox.showerror("ERROR", "Campo Preenchido Invalido!", parent=self.janela)
 
 

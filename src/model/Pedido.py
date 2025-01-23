@@ -3,11 +3,12 @@ from src.model.Produto import Produto
 
 
 class Pedido:
-    def __init__(self, id_ped: int, cliente: Cliente, data: str, produtos: list[tuple[int, Produto]]):
+    def __init__(self, id_ped: int, cliente: Cliente, data: str, produtos: list[tuple[int, Produto]], desconto: int):
         self.id_ped = id_ped
         self.cliente = cliente
         self.produtos = produtos
         self.valor_total = sum([i[0] * i[1].valor for i in produtos])
+        self.desconto = desconto
         self.data = data
 
     def add_produto(self, produto: tuple[int, Produto]):
@@ -36,9 +37,9 @@ class Pedido:
     def __str__(self):
         saida = " "
         saida += "0" * (4 - len(str(self.id_ped))) + str(self.id_ped) + " | "
-        saida += str(self.cliente.nome) + ((25 - len(self.cliente.nome)) * " ") + "| "
+        saida += str(self.cliente.nome) + ((22 - len(self.cliente.nome)) * " ") + "| "
         saida += self.data + " | "
-        saida += "R$" + f"{self.valor_total:.2f}"
+        saida += "R$" + f"{((100 - self.desconto) / 100) * self.valor_total:.2f}"
         return saida
 
     def __eq__(self, other):

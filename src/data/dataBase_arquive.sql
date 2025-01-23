@@ -23,6 +23,7 @@ CREATE TABLE pedidos(
     id_ped INTEGER PRIMARY KEY,
     id_cli INTEGER NOT NULL,
     data CHAR(10),
+    desconto INTEGER NOT NULL,
     FOREIGN KEY (id_cli) REFERENCES clientes(id_cli),
     CONSTRAINT tamanho_data CHECK LENGTH(data) = 10
 );

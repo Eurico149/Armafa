@@ -46,11 +46,11 @@ class PDF_creator:
                     aux_u = f"{self.__pedido.produtos[j-1][1].valor:.2f}".replace(".", ",")
                     if len(aux_u) > 6:
                         aux_u = aux_u[0:-6] + "." + aux_u[-6:]
-                    valor_unidade = f"R${aux_u}"
+                    valor_unidade = f"R$ {aux_u}"
                     aux_t = f"{(self.__pedido.produtos[j-1][0] * self.__pedido.produtos[j-1][1].valor):.2f}".replace(".", ",")
                     if len(aux_t) > 6:
                         aux_t = aux_t[0:-6] + "." + aux_t[-6:]
-                    valor_total = f"R${aux_t}"
+                    valor_total = f"R$ {aux_t}"
                     p = [id_pro, nome, quantidade, valor_unidade, valor_total]
 
                 aux = (0, 0, 0, 0)
@@ -68,6 +68,8 @@ class PDF_creator:
                 elif j == len(self.__pedido.produtos):
                     if i == 0:
                         aux = (0, 0, 5, 0)
+                    elif i == 4:
+                        aux = (0, 0, 0, 5)
                     self.__cv.roundRect(20 + sum(col_l[:i + 1]) - col_l[i], altura - 181 - j * h, col_l[i], h, aux)
                     self.__cv.drawString(22 + sum(col_l[:i + 1]) - col_l[i], altura - 177 - j * h, p[i])
                 else:
@@ -75,11 +77,22 @@ class PDF_creator:
                     self.__cv.roundRect(20 + sum(col_l[:i + 1]) - col_l[i], altura - 181 - j * h, col_l[i], h, aux)
                     self.__cv.drawString(22 + sum(col_l[:i + 1]) - col_l[i], altura - 177 - j * h, p[i])
             if j == len(self.__pedido.produtos):
-                self.__cv.roundRect(470, altura - 196 - j * h, col_l[4], h, (0, 0, 5, 5))
-                vt = f"{self.__pedido.valor_total:.2f}".replace(".", ",")
+                self.__cv.roundRect(470, altura - 199 - j * h, col_l[4], h, (5, 5, 0, 0))
+                self.__cv.roundRect(470, altura - 199 - (j+1) * h, col_l[4], h, (0, 0, 5, 5))
+                st = f"{self.__pedido.valor_total:.2f}".replace(".", ",")
+                if len(st) > 6:
+                    st = st[0:-6] + "." + st[-6:]
+                self.__cv.drawString(472, altura - 195 - j * h, f"R$ {st}")
+                self.__cv.drawString(425, altura - 195 - j * h, "SubTotal:")
+                vt = f"{self.__pedido.valor_total * ((100 - self.__pedido.desconto) / 100):.2f}".replace(".", ",")
                 if len(vt) > 6:
                     vt = vt[0:-6] + "." + vt[-6:]
-                self.__cv.drawString(472, altura - 192 - j * h, f"R${vt}")
+                self.__cv.drawString(472, altura - 195 - (j+1) * h, f"R$ {vt}")
+                self.__cv.drawString(443, altura - 195 - (j+1) * h, "Total:")
+
+                self.__cv.roundRect(470, altura - 199 - (j+2) * (h+1), 30, h, (5, 5, 5, 5))
+                self.__cv.drawString(472, altura - 195 - (j+2) * (h+1), f"{self.__pedido.desconto}%")
+                self.__cv.drawString(439, altura - 195 - (j+2) * (h+1), "Desc.:")
 
                 self.__cv.roundRect(20, altura - 245 - j * h, 300, 60, (5, 5, 5, 5))
                 self.__cv.drawString(22, altura - 195 - j * h, "Observações:")

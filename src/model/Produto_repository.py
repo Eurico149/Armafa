@@ -1,16 +1,14 @@
 import sqlite3 as sq
 from src.model.Produto import Produto
+from src.model.Singleton import SingletonMeta
 
-class Produto_repository:
-    _instancia = None
 
-    def __new__(cls):
-        if cls._instancia is None:
-            cls._instancia = super(Produto_repository, cls).__new__(cls)
-        return cls._instancia
+class Produto_repository(metaclass=SingletonMeta):
 
     def __init__(self):
-        self.__produtos: dict = self.__get_produtos()
+        if not hasattr(self, "_initialized"):
+            self.__produtos: dict = self.__get_produtos()
+            print("produtos")
 
     def __get_produtos(self):
         consulta = f"SELECT * FROM produtos"
