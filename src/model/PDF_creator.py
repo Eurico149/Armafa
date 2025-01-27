@@ -5,8 +5,6 @@ from src.model.Cliente import Cliente
 from src.model.Pedido import Pedido
 from os import startfile, path
 
-from src.model.Produto import Produto
-
 
 class PDF_creator:
 
@@ -223,7 +221,10 @@ class PDF_creator:
 
         # cnpj = "20.031.219/0002-46"
         cnpj = self._cliente.cpf_cnpj
-        # cnpj = cnpj[0:2] + "." + cnpj[2:5] + "." + cnpj[5:8] + "/" + cnpj[8:12] + "-" + cnpj[12:]
+        if len(cnpj) == 11:
+            cnpj = cnpj[0:3] + "." + cnpj[3:6] + "." + cnpj[6:9] + "-" + cnpj[9:]
+        else:
+            cnpj = cnpj[0:2] + "." + cnpj[2:5] + "." + cnpj[5:8] + "/" + cnpj[8:12] + "-" + cnpj[12:]
         self._cv.drawString(390, altura - 120, "CPF/CNPJ: " + cnpj)
         self._cv.drawString(438, altura - 121, 26 * "_")
 
@@ -232,7 +233,7 @@ class PDF_creator:
         self._cv.drawString(66, altura - 136, 43 * "_")
 
         cep = self._cliente.cep
-        # cep = cep[0:5] + "-" + cep[5:]
+        cep = cep[0:5] + "-" + cep[5:]
         self._cv.drawString(285, altura - 135, "CEP: " + cep)
         self._cv.drawString(308, altura - 136, 12 * "_")
 
@@ -248,9 +249,11 @@ class PDF_creator:
         self._cv.drawString(23, altura - 150, "Bairro: " + bairro)
         self._cv.drawString(51, altura - 151, 20 * "_")
 
-        # telefone = "(83) 8618-1144"
         telefone = self._cliente.fone
-        telefone = "(" + telefone[0:2] + ") " + telefone[2:6] + "-" + telefone[6:]
+        if len(telefone) == 10:
+            telefone = "(" + telefone[0:2] + ") " + telefone[2:6] + "-" + telefone[6:]
+        else:
+            telefone = "(" + telefone[0:2] + ") " + telefone[2] + " " + telefone[3:7] + "-" + telefone[7:]
         self._cv.drawString(158, altura - 150, "Fone: " + telefone)
         self._cv.drawString(183, altura - 151, 23 * "_")
 
@@ -362,31 +365,3 @@ class Pdf_espelho(PDF_creator):
                     aux = (0, 0, 0, 0)
                     self._cv.roundRect(20 + sum(col_l[:i + 1]) - col_l[i], altura - 44 - ((j-32) % 39) * h, col_l[i], h, aux)
                     self._cv.drawString(22 + sum(col_l[:i + 1]) - col_l[i], altura - 40 - ((j-32) % 39) * h, p[i])
-
-
-if __name__ == "__main__":
-    produto = Produto(id_pro=101, nome="Caneta Azul", valor=2.50)
-
-    data = []
-    for i in range(200):
-        produto = Produto(id_pro=101, nome=f"{i}", valor=2.50)
-        data.append((1, produto))
-
-    cliente = Cliente(id_cli=1,
-    nome="João Silva",
-    cep="12345678",
-    endereco="Rua das Flores, 123",
-    uf="SP",
-    cidade="São Paulo",
-    bairro="Centro",
-    cpf_cnpj="12345678900",
-    fone="1191234-5678",
-    email="joao.silva@email.com")
-
-    pedido = Pedido(id_ped=1,
-    cliente=cliente,
-    data="27/01/2025",
-    produtos=data,
-    desconto=10)
-
-    PDF_creator("teste.pdf", cliente, pedido)

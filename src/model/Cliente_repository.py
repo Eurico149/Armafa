@@ -46,15 +46,14 @@ class Cliente_repository(metaclass=SingletonMeta):
         del self.__clientes[id_cli]
 
     def change_cliente(self, c: Cliente):
-        if not c.id_cli in self.__clientes:
-            return
-        consulta = "UPDATE clientes SET nome=?, cep=?, endereco=?, uf=?, cidade=?, bairro=?, cpf_cnpj=?, fone=?, email=? WHERE id_cli=?"
-        with sq.connect("src/data/dataBase.db") as conn:
-            cur = conn.cursor()
-            data = (c.nome, c.cep, c.endereco, c.uf, c.cidade, c.bairro, c.cpf_cnpj, c.fone, c.email, c.id_cli)
-            cur.execute(consulta, data)
+        if c.id_cli in self.__clientes:
+            consulta = "UPDATE clientes SET nome=?, cep=?, endereco=?, uf=?, cidade=?, bairro=?, cpf_cnpj=?, fone=?, email=? WHERE id_cli=?"
+            with sq.connect("src/data/dataBase.db") as conn:
+                cur = conn.cursor()
+                data = (c.nome, c.cep, c.endereco, c.uf, c.cidade, c.bairro, c.cpf_cnpj, c.fone, c.email, c.id_cli)
+                cur.execute(consulta, data)
 
-        self.__clientes[c.id_cli] = c
+            self.__clientes[c.id_cli] = c
 
     def get_max_id(self):
         if len(self.__clientes) == 0:

@@ -173,7 +173,7 @@ class Pedido_adder():
 
         listbox1.bind("<Double-1>", add_prod)
 
-        frame4.grid(column=0, row=1)
+        frame4.grid(column=0, row=1, sticky="w", padx=10)
         listbox1.grid(row=1, column=0, sticky="nsew")
         scrollbar1.grid(row=1, column=1, sticky="ns")
 
@@ -204,21 +204,20 @@ class Pedido_adder():
 
         listbox2.bind("<Double-1>", del_prod)
 
-        frame5.grid(column=0, row=2)
+        frame5.grid(column=0, row=2, sticky="w", padx=10)
         listbox2.grid(row=0, column=0, sticky="nsew")
         scrollbar2.grid(row=0, column=1, sticky="ns")
 
         frame6 = tk.Frame(self.__master, bg="gray25")
-        tk.Frame(frame6, width=105, background="gray25").grid(row=0, column=0)
-        check_esp = tk.Checkbutton(frame6, background="gray25", variable=self.__esp_var)
-        check_esp.select()
-        check_esp.grid(row=1, column=2, sticky="w")
-        ttk.Label(frame6, background="gray25", foreground="white", text="Gerar Espelho").grid(row=1, column=1,
-                                                                                               sticky="nsew")
+        esp_check = tk.Checkbutton(frame6, background="gray25", variable=self.__esp_var)
+        esp_check.grid(row=0, column=1, sticky="w")
+        esp_check.select()
+        ttk.Label(frame6, background="gray25", foreground="white", text="Gerar Espelho").grid(row=0, column=0,
+                                                                                          sticky="e")
         check_pdf = tk.Checkbutton(frame6, background="gray25", variable=self.__pdf_var)
         check_pdf.select()
-        check_pdf.grid(row=2, column=2, sticky="w")
-        ttk.Label(frame6, background="gray25", foreground="white", text="Gerar PDF").grid(row=2, column=1, sticky="e")
+        check_pdf.grid(row=1, column=1, sticky="w")
+        ttk.Label(frame6, background="gray25", foreground="white", text="Gerar PDF").grid(row=1, column=0, sticky="e")
         frame6.grid(row=2, column=1, sticky="e")
 
         valalidar_ent = self.__master.register(self.__validate_ent)
@@ -241,10 +240,10 @@ class Pedido_adder():
         desc.grid(row=0, column=0, sticky="w")
         ttk.Label(framedesc, text="%", background="gray25", foreground="white").grid(row=0, column=1, sticky="w")
         framedesc.grid(row=2, column=0, sticky="w")
-        frame7.grid(row=2, column=0, columnspan=2, sticky="e", padx=123)
+        frame7.grid(row=2, column=0, columnspan=2, sticky="e", padx=105)
 
         adicionar = ttk.Button(self.__master, text="Adicionar", command=lambda: self.__adicionar(int(text), cb.get(), entry3.get(), desc.get()))
-        adicionar.grid(column=1, row=2, sticky="se", pady=5, padx=7)
+        adicionar.grid(column=1, row=2, sticky="se", pady=10, padx=10)
 
     def __get_total(self):
         valor = sum([p[1].valor * p[0] for p in self.__produtos])
