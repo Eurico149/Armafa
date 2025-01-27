@@ -1,5 +1,6 @@
 import sqlite3 as sq
 from src.model.Produto import Produto
+from src.model.Pedidos_repository import Pedido_repository as Per
 from src.model.Singleton import SingletonMeta
 
 
@@ -8,7 +9,6 @@ class Produto_repository(metaclass=SingletonMeta):
     def __init__(self):
         if not hasattr(self, "_initialized"):
             self.__produtos: dict = self.__get_produtos()
-            print("produtos")
 
     def __get_produtos(self):
         consulta = f"SELECT * FROM produtos"
@@ -44,6 +44,7 @@ class Produto_repository(metaclass=SingletonMeta):
             cur.execute(consulta, (nome, valor, id_prod))
 
         self.__produtos[id_prod] = Produto(id_prod, nome, valor)
+        Per().change_name_produto(id_prod, nome)
 
     def del_produto(self, id_pro):
         consulta = f"DELETE FROM produtos WHERE id_pro={id_pro}"

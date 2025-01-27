@@ -11,6 +11,11 @@ class Pedido:
         self.desconto = desconto
         self.data = data
 
+    def get_produto(self, id_pro: int):
+        for i in self.produtos:
+            if i[1].id_pro == id_pro:
+                return i[1]
+
     def add_produto(self, produto: tuple[int, Produto]):
         for i in range(len(self.produtos)):
             if self.produtos[i][1] == produto[1]:

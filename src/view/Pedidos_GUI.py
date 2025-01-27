@@ -98,6 +98,7 @@ class Pedido_adder():
         self.__destruir()
         self.__bucar_var = StringVar()
         self.__pdf_var = tk.IntVar()
+        self.__esp_var = tk.IntVar()
         self.__desc_var = StringVar()
         self.__total1_var = StringVar()
         self.__total2_var = StringVar()
@@ -207,11 +208,17 @@ class Pedido_adder():
         listbox2.grid(row=0, column=0, sticky="nsew")
         scrollbar2.grid(row=0, column=1, sticky="ns")
 
-        frame6 = tk.Frame(self.__master)
+        frame6 = tk.Frame(self.__master, bg="gray25")
+        tk.Frame(frame6, width=105, background="gray25").grid(row=0, column=0)
+        check_esp = tk.Checkbutton(frame6, background="gray25", variable=self.__esp_var)
+        check_esp.select()
+        check_esp.grid(row=1, column=2, sticky="w")
+        ttk.Label(frame6, background="gray25", foreground="white", text="Gerar Espelho").grid(row=1, column=1,
+                                                                                               sticky="nsew")
         check_pdf = tk.Checkbutton(frame6, background="gray25", variable=self.__pdf_var)
         check_pdf.select()
-        check_pdf.grid(row=0, column=1, sticky="w")
-        ttk.Label(frame6, background="gray25", foreground="white", text="Gerar PDF").grid(row=0, column=0, sticky="nsew")
+        check_pdf.grid(row=2, column=2, sticky="w")
+        ttk.Label(frame6, background="gray25", foreground="white", text="Gerar PDF").grid(row=2, column=1, sticky="e")
         frame6.grid(row=2, column=1, sticky="e")
 
         valalidar_ent = self.__master.register(self.__validate_ent)
@@ -234,10 +241,10 @@ class Pedido_adder():
         desc.grid(row=0, column=0, sticky="w")
         ttk.Label(framedesc, text="%", background="gray25", foreground="white").grid(row=0, column=1, sticky="w")
         framedesc.grid(row=2, column=0, sticky="w")
-        frame7.grid(row=2, column=0, columnspan=2, sticky="e", padx=102)
+        frame7.grid(row=2, column=0, columnspan=2, sticky="e", padx=123)
 
         adicionar = ttk.Button(self.__master, text="Adicionar", command=lambda: self.__adicionar(int(text), cb.get(), entry3.get(), desc.get()))
-        adicionar.grid(column=1, row=2, sticky="se", pady=10, padx=10)
+        adicionar.grid(column=1, row=2, sticky="se", pady=5, padx=7)
 
     def __get_total(self):
         valor = sum([p[1].valor * p[0] for p in self.__produtos])
@@ -298,9 +305,11 @@ class Pedido_adder():
             desconto = int(desconto)
         if not Pec().add_pedido(id_ped, id_cli, data, self.__produtos, desconto):
             return messagebox.showerror("ERROR", "Erro ao Criar Pedido")
+        messagebox.showinfo("Armafa", "Pedido Adicionado Com Sucesso!")
         if self.__pdf_var.get() == 1:
             Pec().create_pdf(id_ped)
-        messagebox.showinfo("Armafa", "Pedido Adicionado Com Sucesso!")
+        if self.__esp_var.get() == 1:
+            Pec().create_espelho(id_ped)
         self.__destruir()
         self.__master.geometry("480x270")
         self.__callback()
@@ -325,6 +334,7 @@ class Pedido_changer:
         self.janela.grab_set()
         self.__bucar_var = StringVar()
         self.__pdf_var = tk.IntVar()
+        self.__esp_var = tk.IntVar()
         self.__desc_var = StringVar()
         self.__total1_var = StringVar()
         self.__total2_var = StringVar()
@@ -342,7 +352,7 @@ class Pedido_changer:
     def __aplly_widgets(self):
 
         deletar = ttk.Button(self.janela, text="Deletar", command=self.__deletar)
-        deletar.grid(row=0, column=1, sticky="sw", pady=5)
+        deletar.grid(row=0, column=1, sticky="sw", pady=10)
 
         frame1 = tk.Frame(self.janela, background="gray25")
         ttk.Label(frame1, text="Data: ", background="gray25", foreground="white", font=("Segoe UI", 12)).grid(column=0,
@@ -366,7 +376,7 @@ class Pedido_changer:
         text = "0" * (4 - len(aux)) + aux
         label1 = ttk.Label(self.janela, text=f"PEDIDO Nº{text}", background="gray25", foreground="yellow",
                            font=("Segoe UI", 14))
-        label1.grid(row=0, column=3, pady=2, sticky="ne", padx=2)
+        label1.grid(row=0, column=3, pady=2, sticky="ne", padx=10)
 
         tk.Frame(self.janela, width=10, background="gray25").grid(row=0, column=0)
 
@@ -459,15 +469,21 @@ class Pedido_changer:
 
         frame8 = tk.Frame(self.janela, background="gray25")
         tk.Frame(frame8, width=58, height=1, background="gray25").grid(row=0, column=0)
+        frame15 = tk.Frame(frame8)
+        check_esp = tk.Checkbutton(frame15, background="gray25", variable=self.__esp_var)
+        check_esp.grid(row=0, column=1, sticky="w")
+        ttk.Label(frame15, background="gray25", foreground="white", text="Gerar Espelho").grid(row=0, column=0,
+                                                                                          sticky="nsew")
+        frame15.grid(row=0, column=1, sticky="e")
         frame6 = tk.Frame(frame8)
         check_pdf = tk.Checkbutton(frame6, background="gray25", variable=self.__pdf_var)
         check_pdf.grid(row=0, column=1, sticky="w")
         ttk.Label(frame6, background="gray25", foreground="white", text="Gerar PDF").grid(row=0, column=0,
                                                                                           sticky="nsew")
-        frame6.grid(row=0, column=1, sticky="e")
+        frame6.grid(row=1, column=1, sticky="e")
         salvar = ttk.Button(frame8, text="Salvar", command=lambda: self.__salvar(cb.get(), entry3.get(), desc.get()))
-        salvar.grid(row=1, column=1, padx=10, pady=10)
-        frame8.grid(row=2, column=3, sticky="se")
+        salvar.grid(row=3, column=1, padx=10, pady=10)
+        frame8.grid(row=2, column=3, sticky="se", pady=5)
 
         frame7 = tk.Frame(self.janela, background="gray25")
         entry4 = ttk.Entry(frame7, width=12, textvariable=self.__total2_var)
@@ -496,19 +512,25 @@ class Pedido_changer:
             Pec().del_pedido(self.__pedido.id_ped)
             self.janela.destroy()
 
-
     def __get_total(self):
         valor = sum([p[1].valor * p[0] for p in self.__produtos])
-        valor = f"R$ {valor:.2f}".replace(".", ",")
-        self.__total2_var.set(valor)
+        valor = f"{valor:.2f}".replace(".", ",")
+        if len(valor) > 6:
+            valor = valor[0:-6] + "." + valor[-6:]
+        self.__total2_var.set(f"R$ {valor}")
 
     def __veri_desc(self, *args):
         if not (self.__desc_var.get() == "" or 0 <= int(self.__desc_var.get()) <= 100):
             self.__desc_var.set("100")
         if self.__desc_var.get() != "":
-            valor = float(self.__total2_var.get().replace(",", ".").split(" ")[1])
+            valor =  self.__total2_var.get()
+            valor = valor.replace(".", "")
+            valor = float(valor.replace(",", ".").split(" ")[1])
             valor = valor * ((100 - int(self.__desc_var.get())) / 100)
-            valor = f"R$ {valor:.2f}".replace(".", ",")
+            valor = f"{valor:.2f}".replace(".", ",")
+            if len(valor) > 6:
+                valor = valor[0:-6] + "." + valor[-6:]
+            valor = f"R$ {valor}"
         else:
             valor = self.__total2_var.get()
         self.__total1_var.set(valor)
@@ -560,6 +582,10 @@ class Pedido_changer:
             return
         if Pec().change_pedido(self.__pedido.id_ped, id_c, data, self.__produtos, desconto):
             messagebox.showinfo("Armafa", "Pedido Modificado Com Sucesso!", parent=self.janela)
+            if self.__pdf_var.get() == 1:
+                Pec().create_pdf(self.__pedido.id_ped)
+            if self.__esp_var.get() == 1:
+                Pec().create_espelho(self.__pedido.id_ped)
             self.janela.destroy()
         else:
             messagebox.showerror("ERROR", "Não Foi Possivel Modificar Esse pedido!", parent=self.janela)

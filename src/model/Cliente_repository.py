@@ -8,7 +8,6 @@ class Cliente_repository(metaclass=SingletonMeta):
     def __init__(self):
         if not hasattr(self, "_initialized"):
             self.__clientes = self.__get_clientes()
-            print("clientes")
 
     def __get_clientes(self):
         consulta = "SELECT * FROM clientes"

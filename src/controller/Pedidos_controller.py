@@ -4,7 +4,7 @@ import pytz
 from src.model.Cliente_repository import Cliente_repository as Clr
 from src.model.Pedido import Pedido
 from src.model.Pedidos_repository import Pedido_repository as Pr
-from src.model.PDF_creator import PDF_creator
+from src.model.PDF_creator import PDF_creator, Pdf_espelho
 from src.model.Produto import Produto
 
 
@@ -79,5 +79,10 @@ class Pedidos_controller:
 
     def create_pdf(self, id_ped: int):
         pedido = Pr().get_pedido(id_ped)
-        nome = str(pedido.id_ped) + "-" + pedido.data.replace("/", "-") + ".pdf"
+        nome = str(pedido.id_ped) + "-" + pedido.data.replace("/", "") + ".pdf"
         PDF_creator(nome, pedido.cliente, pedido)
+
+    def create_espelho(self, id_ped: int):
+        pedido = Pr().get_pedido(id_ped)
+        nome = "espelho-" + str(pedido.id_ped) + "-" + pedido.data.replace("/", "") + ".pdf"
+        Pdf_espelho(nome, pedido.cliente, pedido)

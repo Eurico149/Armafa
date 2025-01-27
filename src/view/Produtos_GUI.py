@@ -209,7 +209,10 @@ class Produto_changer:
             messagebox.showerror("ERROR", "Nome, ou Valor Invalido", parent=self.janela)
 
     def __deletar(self, id_pro):
-        if Prc().del_produto(id_pro):
+        aux = Prc().del_produto(id_pro)
+        if aux == -1:
+            messagebox.showerror("ERROR", "Impossivel Deletar Produto, o Mesmo ja Esta Cadastrado em Outro Pedido", parent=self.janela)
+        elif aux:
             messagebox.showinfo("Armafa", "Produto Deletado com Sucesso", parent=self.janela)
             self.janela.destroy()
         else:

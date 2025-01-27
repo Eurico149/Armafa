@@ -9,6 +9,4 @@ para armazenar e gerir seus produtos e pedidos com funcionalidades como criar PD
 <ul>
     <li>Tela de Mudança de Clientes</li>
     <li>Tratar Melhor as Entradas do Usuario</li>
-    <li>Conseguencias de deletar um produto que ja foi cadastrado em um pedido</li>
-    <li>Gerar Pdf Com Paginas Dinamicas</li>
 </ul>

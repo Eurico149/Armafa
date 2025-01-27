@@ -10,7 +10,6 @@ class Pedido_repository(metaclass=SingletonMeta):
     def __init__(self):
         if not hasattr(self, "_initialized"):
             self.__pedidos = self.__get_pedidos()
-            print("pedidos")
 
     def __get_pedidos(self):
         consulta = f"SELECT id_ped, id_cli, data, desconto FROM pedidos"
@@ -46,9 +45,14 @@ class Pedido_repository(metaclass=SingletonMeta):
 
             del self.__pedidos[id_ped]
 
+    def produto_in_pedidos(self, id_pro: int):
+        for p in self.__pedidos.values():
+            if p.get_produto(id_pro):
+                return True
+        return False
+
 
     def change_pedido(self, p: Pedido):
-        print(p.produtos)
         consulta1 = "UPDATE pedidos SET id_cli=?, data=?, desconto=? WHERE id_ped=?"
         consulta2 = f"DELETE FROM pro_ped WHERE id_ped={p.id_ped}"
         with sq.connect("src/data/dataBase.db") as conn:
@@ -66,6 +70,13 @@ class Pedido_repository(metaclass=SingletonMeta):
             cur.executemany(consulta, data)
 
         self.__pedidos[p.id_ped] = Pedido(p.id_ped, p.cliente, p.data, p.produtos, p.desconto)
+
+    def change_name_produto(self, id_pro: int, nome: str):
+        for p in self.__pedidos.values():
+            for i in p.produtos:
+                if i[1].id_pro == id_pro:
+                    i[1].nome = nome
+                    break
 
     def add_pro_pre(self, id_ped: int, produto: tuple[int, Produto]):
         if id_ped in self.__pedidos:
