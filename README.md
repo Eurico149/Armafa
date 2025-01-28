@@ -7,7 +7,5 @@ para armazenar e gerir seus produtos e pedidos com funcionalidades como criar PD
 
 <h2>Backlog</h2>
 <ul>
-    <li>Tratar Melhor as Entradas do Usuario</li>
-    <li>Filtro de Pesguisa de cliente na combox</li>
-    <li>Melhores Responsabilidade combox cliente</li>
+   
 </ul>

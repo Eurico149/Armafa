@@ -1,8 +1,5 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-
-from reportlab.lib.colors import salmon
-
 from src.controller.Cliente_contorller import Cliente_controller as Clc
 from src.model.Cliente import Cliente
 
@@ -19,7 +16,7 @@ class Cliente_GUI:
         self.__aplly_widgets()
 
     def __config_janela(self):
-        self.janela.title("Armafa")
+        self.janela.title("Armafa - Cliente")
         self.janela.geometry("480x270+415+215")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
@@ -218,7 +215,7 @@ class Cliente_changer:
 
 
     def __config_janela(self):
-        self.janela.title("Armafa - Cliente - Adicionar")
+        self.janela.title("Armafa - Cliente - Mudança")
         self.janela.geometry("480x200+430+230")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
@@ -329,7 +326,10 @@ class Cliente_changer:
             messagebox.showerror("ERROR", "Campo Preenchido Invalido!", parent=self.janela)
 
     def __delete(self):
-        if Clc().del_cliente(self.__cliente.id_cli):
+        aux = Clc().del_cliente(self.__cliente.id_cli)
+        if aux == -1:
+            messagebox.showerror("ERROR", "Impossive Apagar Cliente, O Mesmo Ja Esta Vincaulado a um Pedido!", parent=self.janela)
+        elif aux:
             messagebox.showinfo("Armafa", "Cliente Deletado com Sucesso!", parent=self.janela)
             self.janela.destroy()
             self.valid = True

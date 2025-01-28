@@ -233,7 +233,8 @@ class PDF_creator:
         self._cv.drawString(66, altura - 136, 43 * "_")
 
         cep = self._cliente.cep
-        cep = cep[0:5] + "-" + cep[5:]
+        if cep != "":
+            cep = cep[0:5] + "-" + cep[5:]
         self._cv.drawString(285, altura - 135, "CEP: " + cep)
         self._cv.drawString(308, altura - 136, 12 * "_")
 
@@ -252,7 +253,7 @@ class PDF_creator:
         telefone = self._cliente.fone
         if len(telefone) == 10:
             telefone = "(" + telefone[0:2] + ") " + telefone[2:6] + "-" + telefone[6:]
-        else:
+        elif len(telefone) == 11:
             telefone = "(" + telefone[0:2] + ") " + telefone[2] + " " + telefone[3:7] + "-" + telefone[7:]
         self._cv.drawString(158, altura - 150, "Fone: " + telefone)
         self._cv.drawString(183, altura - 151, 23 * "_")

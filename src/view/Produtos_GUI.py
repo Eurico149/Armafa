@@ -103,7 +103,7 @@ class Produto_adder:
         self.__aplly_widgets()
 
     def __config_janela(self):
-        self.janela.title("Armafa")
+        self.janela.title("Armafa - Produto - Adicionar")
         self.janela.geometry("300x180+630+230")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
@@ -160,7 +160,7 @@ class Produto_changer:
         self.__aplly_widgets()
 
     def __config_janela(self):
-        self.janela.title("Armafa")
+        self.janela.title("Armafa - Produto - Mudança")
         self.janela.geometry("300x180+630+230")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")

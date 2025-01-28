@@ -100,6 +100,7 @@ class Pedido_adder():
         self.__pdf_var = tk.IntVar()
         self.__esp_var = tk.IntVar()
         self.__desc_var = StringVar()
+        self.__cb_var = StringVar()
         self.__total1_var = StringVar()
         self.__total2_var = StringVar()
         self.__produtos: list[tuple[int, Produto]] = []
@@ -117,13 +118,20 @@ class Pedido_adder():
         entry3.insert(0, Pec().get_data_hoje())
 
         frame2 = tk.Frame(frame1, background="gray25")
-        cb = ttk.Combobox(frame2, width=15)
+
+        cb = ttk.Combobox(frame2, width=15, textvariable=self.__cb_var)
         cb.config(values=Clc().get_clientes(cb.get()))
         cb.insert(0, "Cliente")
         cb.grid(row=0, column=0, sticky="nsew")
         adicionar_cliente = ttk.Button(frame2, text="...", width=3, command=lambda: Cliente_GUI(self.__master))
         adicionar_cliente.grid(row=0, column=1, sticky="nsew")
         frame2.grid(row=1, column=0, columnspan=2, pady=15)
+
+        def atualizar_clientes(*args):
+            v = Clc().get_clientes(cb.get())
+            cb['values'] = v
+
+        self.__cb_var.trace("w", atualizar_clientes)
 
         frame1.grid(row=1, column=1)
 
@@ -606,7 +614,7 @@ class Quantidade_getter:
         self.__aplly_widgets()
 
     def __config_janela(self):
-        self.janela.title("Armafa")
+        self.janela.title("Armafa - Pedido")
         self.janela.geometry("300x180+615+215")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
@@ -685,7 +693,7 @@ class Produto_changer:
         self.__aplly_widgets()
 
     def __config_janela(self):
-        self.janela.title("Armafa")
+        self.janela.title("Armafa - Pedido - Produto - Mudança")
         self.janela.geometry("300x180")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")

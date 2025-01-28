@@ -51,6 +51,11 @@ class Pedido_repository(metaclass=SingletonMeta):
                 return True
         return False
 
+    def cliente_in_pedidos(self, id_cli: int):
+        for p in self.__pedidos.values():
+            if p.cliente.id_cli == id_cli:
+                return True
+        return False
 
     def change_pedido(self, p: Pedido):
         consulta1 = "UPDATE pedidos SET id_cli=?, data=?, desconto=? WHERE id_ped=?"
