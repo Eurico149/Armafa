@@ -1,3 +1,5 @@
+import os
+
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
@@ -11,12 +13,15 @@ class PDF_creator:
     def __init__(self, nome_arquivo: str, cliente: Cliente, pedido: Pedido):
         self._cliente = cliente
         self._pedido = pedido
-        self._nome = self.__valida_nome(nome_arquivo)
+        self._nome = self._valida_nome(nome_arquivo)
         self._cont = 1
         self._cv = canvas.Canvas(self._nome, pagesize=A4)
         self.__make_pdf()
 
-    def __valida_nome(self, nome_base):
+    def _valida_nome(self, nome_base):
+        output_dir = './pdfs'
+        os.makedirs(output_dir, exist_ok=True)
+        nome_base = os.path.join(output_dir, nome_base)
         nome, extensao = path.splitext(nome_base)
         contador = 1
         nome_unico = nome_base

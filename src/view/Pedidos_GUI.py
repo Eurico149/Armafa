@@ -1,13 +1,22 @@
+import os
+import sys
 import tkinter as tk
 from tkinter import ttk, Toplevel, messagebox, StringVar
 
 from src.controller.Cliente_contorller import Cliente_controller as Clc
 from src.controller.Pedidos_controller import Pedidos_controller as Pec
 from src.controller.Produto_controller import Produto_controller as Prc
+from src.model.ArmafaExeption import ArmafaExeption
 from src.model.Produto import Produto
 from src.model.Pedido import Pedido
 from src.view.Cliente_GUI import Cliente_GUI
 
+def get_resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 class Pedidos_GUI:
 
@@ -121,7 +130,6 @@ class Pedido_adder():
 
         cb = ttk.Combobox(frame2, width=15, textvariable=self.__cb_var)
         cb.config(values=Clc().get_clientes(cb.get()))
-        cb.insert(0, "Cliente")
         cb.grid(row=0, column=0, sticky="nsew")
         adicionar_cliente = ttk.Button(frame2, text="...", width=3, command=lambda: Cliente_GUI(self.__master))
         adicionar_cliente.grid(row=0, column=1, sticky="nsew")
@@ -131,7 +139,7 @@ class Pedido_adder():
             v = Clc().get_clientes(cb.get())
             cb['values'] = v
 
-        self.__cb_var.trace("w", atualizar_clientes)
+        cb.config(postcommand=atualizar_clientes)
 
         frame1.grid(row=1, column=1)
 
@@ -304,22 +312,20 @@ class Pedido_adder():
                 listbox.insert(tk.END, str(i))
 
     def __adicionar(self, id_ped: int, id_cli: str, data: str, desconto):
-        if len(self.__produtos) == 0:
-            return messagebox.showerror("ERROR", "Impossivel salvar Pedido Sem Produtos!")
-        if not desconto.isdigit():
-            desconto = 0
-        else:
-            desconto = int(desconto)
-        if not Pec().add_pedido(id_ped, id_cli, data, self.__produtos, desconto):
-            return messagebox.showerror("ERROR", "Erro ao Criar Pedido")
-        messagebox.showinfo("Armafa", "Pedido Adicionado Com Sucesso!")
-        if self.__pdf_var.get() == 1:
-            Pec().create_pdf(id_ped)
-        if self.__esp_var.get() == 1:
-            Pec().create_espelho(id_ped)
-        self.__destruir()
-        self.__master.geometry("480x270")
-        self.__callback()
+        try:
+            Pec().add_pedido(id_ped, id_cli, data, self.__produtos, desconto)
+            messagebox.showinfo("Armafa", "Pedido Adicionado Com Sucesso!", parent=self.__master)
+            if self.__pdf_var.get() == 1:
+                Pec().create_pdf(id_ped)
+            if self.__esp_var.get() == 1:
+                Pec().create_espelho(id_ped)
+            self.__destruir()
+            self.__master.geometry("480x270")
+            self.__callback()
+        except ArmafaExeption as aerr:
+            messagebox.showerror("ERROR", str(aerr), parent=self.__master)
+        except Exception:
+            messagebox.showerror("Error", "Erro Inesperado", parent=self.__master)
 
     def __voltar(self):
         self.__destruir()
@@ -354,7 +360,7 @@ class Pedido_changer:
         self.janela.geometry("592x333+615+215")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
-        self.janela.iconbitmap("src/data/afghanistan.ico")
+        self.janela.iconbitmap(get_resource_path("src/data/afghanistan.ico"))
 
     def __aplly_widgets(self):
 
@@ -516,8 +522,13 @@ class Pedido_changer:
 
     def __deletar(self):
         if messagebox.askyesno("Comfimação", f"Tem Certeza que Deseja Deletar o Pedido {self.__pedido.id_ped}?", parent=self.janela):
-            Pec().del_pedido(self.__pedido.id_ped)
-            self.janela.destroy()
+            try:
+                Pec().del_pedido(self.__pedido.id_ped)
+                self.janela.destroy()
+            except ArmafaExeption as aerr:
+                messagebox.showerror("ERROR", str(aerr), parent=self.janela)
+            except Exception:
+                messagebox.showerror("ERROR", "Erro Inesperado", parent=self.janela)
 
     def __get_total(self):
         valor = sum([p[1].valor * p[0] for p in self.__produtos])
@@ -576,18 +587,21 @@ class Pedido_changer:
             for i in produtos:
                 listbox.insert(tk.END, str(i))
 
-    def __salvar(self, id_cli: str, data: str, desconto):
-        if not desconto.isdigit():
-            desconto = 0
-        else:
-            desconto = int(desconto)
-        id_c = id_cli.replace(" ", "").split("|")[0]
-        if id_c.isdigit():
-            id_c = int(id_c)
-        else:
-            messagebox.showerror("ERROR", "Cliente Invalido!", parent=self.janela)
-            return
-        if Pec().change_pedido(self.__pedido.id_ped, id_c, data, self.__produtos, desconto):
+    def __salvar(self, id_cli: str, data: str, desconto: str):
+        try:
+            Pec().change_pedido(self.__pedido.id_ped, id_cli, data, self.__produtos, desconto)
+            messagebox.showinfo("Armafa", "Pedido Modificado Com Sucesso!", parent=self.janela)
+            if self.__pdf_var.get() == 1:
+                Pec().create_pdf(self.__pedido.id_ped)
+            if self.__esp_var.get() == 1:
+                Pec().create_espelho(self.__pedido.id_ped)
+            self.janela.destroy()
+        except ArmafaExeption as aeer:
+            messagebox.showerror("ERROR", str(aeer), parent=self.janela)
+        except Exception:
+            messagebox.showerror("ERROR", "ERROR Inesperado!", parent=self.janela)
+
+        if Pec().change_pedido(self.__pedido.id_ped, id_cli, data, self.__produtos, desconto):
             messagebox.showinfo("Armafa", "Pedido Modificado Com Sucesso!", parent=self.janela)
             if self.__pdf_var.get() == 1:
                 Pec().create_pdf(self.__pedido.id_ped)
@@ -618,7 +632,7 @@ class Quantidade_getter:
         self.janela.geometry("300x180+615+215")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
-        self.janela.iconbitmap("src/data/afghanistan.ico")
+        self.janela.iconbitmap(get_resource_path("src/data/afghanistan.ico"))
 
     def __aplly_widgets(self):
         tk.Frame(self.janela, height=40, bg="gray25").grid(row=0, column=1)
@@ -697,7 +711,7 @@ class Produto_changer:
         self.janela.geometry("300x180")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
-        self.janela.iconbitmap("src/data/afghanistan.ico")
+        self.janela.iconbitmap(get_resource_path("src/data/afghanistan.ico"))
 
     def __aplly_widgets(self):
         tk.Frame(self.janela, height=40, bg="gray25").grid(row=0, column=1)

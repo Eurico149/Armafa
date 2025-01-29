@@ -1,8 +1,17 @@
+import os
+import sys
 import tkinter as tk
 from tkinter import ttk, messagebox
 from src.controller.Cliente_contorller import Cliente_controller as Clc
+from src.model.ArmafaExeption import ArmafaExeption
 from src.model.Cliente import Cliente
 
+def get_resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 class Cliente_GUI:
 
@@ -20,7 +29,7 @@ class Cliente_GUI:
         self.janela.geometry("480x270+415+215")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
-        self.janela.iconbitmap("src/data/afghanistan.ico")
+        self.janela.iconbitmap(get_resource_path("src/data/afghanistan.ico"))
 
     def __aplly_widgets(self):
         frame1 = ttk.Frame(self.janela)
@@ -103,7 +112,7 @@ class Cliente_adder:
         self.janela.geometry("480x200+430+230")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
-        self.janela.iconbitmap("src/data/afghanistan.ico")
+        self.janela.iconbitmap(get_resource_path("src/data/afghanistan.ico"))
 
     def __aplly_widgets(self):
 
@@ -193,12 +202,15 @@ class Cliente_adder:
         # id_cli: int, nome: str, cep: str, endereco: str, uf: str, cidade: str, bairro: str, cpf_cnpj: str, fone: str, email: str
 
     def __add(self, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10):
-        if Clc().add_cliente(e1, e2, e3, e4, e5, e6, e7, e8, e9, e10):
+        try:
+            Clc().add_cliente(e1, e2, e3, e4, e5, e6, e7, e8, e9, e10)
             messagebox.showinfo("Armafa", "Cliente Adicionado com Sucesso!", parent=self.janela)
             self.janela.destroy()
             self.valid = True
-        else:
-            messagebox.showerror("ERROR", "Campo Preenchido Invalido!", parent=self.janela)
+        except ArmafaExeption as aerr:
+            messagebox.showerror("ERROR", str(aerr), parent=self.janela)
+        except Exception:
+            messagebox.showerror("ERROR", "Erro Inesperado!")
 
 
 class Cliente_changer:
@@ -219,7 +231,7 @@ class Cliente_changer:
         self.janela.geometry("480x200+430+230")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
-        self.janela.iconbitmap("src/data/afghanistan.ico")
+        self.janela.iconbitmap(get_resource_path("src/data/afghanistan.ico"))
 
     def __aplly_widgets(self):
 
@@ -318,23 +330,28 @@ class Cliente_changer:
         salvar.grid(row=5, column=0, sticky="e", pady=10)
 
     def __save(self, id_cli: str, nome: str, cep: str, endereco: str, uf: str, cidade: str, bairro: str, cpf_cnpj: str, fone: str, email: str):
-        if Clc().change_cliente(id_cli, nome, cep, endereco, uf, cidade, bairro, cpf_cnpj, fone, email):
+        try:
+            Clc().change_cliente(id_cli, nome, cep, endereco, uf, cidade, bairro, cpf_cnpj, fone, email)
             messagebox.showinfo("Armafa", "Cliente Modificado com Sucesso!", parent=self.janela)
             self.janela.destroy()
             self.valid = True
-        else:
-            messagebox.showerror("ERROR", "Campo Preenchido Invalido!", parent=self.janela)
+        except ArmafaExeption as aerr:
+            messagebox.showerror("ERROR", str(aerr), parent=self.janela)
+        except Exception:
+            messagebox.showerror("ERROR", "Erro Inesperado!", parent=self.janela)
+
 
     def __delete(self):
-        aux = Clc().del_cliente(self.__cliente.id_cli)
-        if aux == -1:
-            messagebox.showerror("ERROR", "Impossive Apagar Cliente, O Mesmo Ja Esta Vincaulado a um Pedido!", parent=self.janela)
-        elif aux:
+        try:
+            Clc().del_cliente(self.__cliente.id_cli)
             messagebox.showinfo("Armafa", "Cliente Deletado com Sucesso!", parent=self.janela)
             self.janela.destroy()
             self.valid = True
-        else:
+        except ArmafaExeption as aerr:
+            messagebox.showerror("ERROR", str(aerr), parent=self.janela)
+        except Exception:
             messagebox.showerror("ERROR", "Erro Inesperado!", parent=self.janela)
+
 
 
 

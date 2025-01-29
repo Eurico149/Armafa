@@ -1,8 +1,17 @@
+import os
+import sys
 import tkinter as tk
 from tkinter import ttk, Toplevel, messagebox, StringVar
 from src.controller.Produto_controller import Produto_controller as Prc
+from src.model.ArmafaExeption import ArmafaExeption
 from src.model.Produto import Produto
 
+def get_resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 # Atualizar listbox apos produto adder
 class Produtos_GUI:
@@ -107,7 +116,7 @@ class Produto_adder:
         self.janela.geometry("300x180+630+230")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
-        self.janela.iconbitmap("src/data/afghanistan.ico")
+        self.janela.iconbitmap(get_resource_path("src/data/afghanistan.ico"))
 
     def __aplly_widgets(self):
         tk.Frame(self.janela, height=35, bg="gray25").grid(row=0, column=1)
@@ -141,12 +150,15 @@ class Produto_adder:
         adicionar.grid(row=4, column=2, padx=10, pady=5)
 
     def __add(self, e1, e2, e3):
-        if Prc().add_produto(e1, e2, e3):
+        try:
+            Prc().add_produto(e1, e2, e3)
             messagebox.showinfo("Armafa", "Produto Adicionado com Sucesso!", parent=self.janela)
             self.janela.destroy()
             self.valid = True
-        else:
-            messagebox.showerror("ERROR", "Id, Nome, ou Valor Invalido", parent=self.janela)
+        except ArmafaExeption as aerr:
+            messagebox.showerror("ERROR", str(aerr), parent=self.janela)
+        except Exception:
+            messagebox.showerror("ERROR", "ERRO Inesperado!", parent=self.janela)
 
 
 class Produto_changer:
@@ -164,7 +176,7 @@ class Produto_changer:
         self.janela.geometry("300x180+630+230")
         self.janela.resizable(False, False)
         self.janela.configure(bg="gray25")
-        self.janela.iconbitmap("src/data/afghanistan.ico")
+        self.janela.iconbitmap(get_resource_path("src/data/afghanistan.ico"))
 
     def __aplly_widgets(self):
         tk.Frame(self.janela, height=35, bg="gray25").grid(row=0, column=1)
@@ -203,20 +215,24 @@ class Produto_changer:
         deletar.grid(row=0, column=2, padx=10, pady=10)
 
     def __aplicar(self, e1, e2, e3):
-        if Prc().mudar_produto(e1, e2, e3):
+        try:
+            Prc().mudar_produto(e1, e2, e3)
             messagebox.showinfo("Armafa", "Produto Atualizado com Sucesso", parent=self.janela)
-        else:
-            messagebox.showerror("ERROR", "Nome, ou Valor Invalido", parent=self.janela)
+        except ArmafaExeption as aerr:
+            messagebox.showerror("ERROR", str(aerr), parent=self.janela)
+        except Exception:
+            messagebox.showerror("ERROR", "Erro Inesperado!", parent=self.janela)
 
     def __deletar(self, id_pro):
-        aux = Prc().del_produto(id_pro)
-        if aux == -1:
-            messagebox.showerror("ERROR", "Impossivel Deletar Produto, o Mesmo ja Esta Cadastrado em Outro Pedido", parent=self.janela)
-        elif aux:
-            messagebox.showinfo("Armafa", "Produto Deletado com Sucesso", parent=self.janela)
+        try:
+            Prc().del_produto(id_pro)
+            messagebox.showinfo("Armafa", "Produto Deletado com Sucesso!", parent=self.janela)
             self.janela.destroy()
-        else:
-            messagebox.showerror("ERROR", "Erro Inesperado", parent=self.janela)
+        except ArmafaExeption as aerr:
+            messagebox.showerror("ERROR", str(aerr), parent=self.janela)
+        except Exception:
+            messagebox.showerror("ERROR", "Erro Inesperado!", parent=self.janela)
+
 
 
 

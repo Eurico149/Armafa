@@ -1,8 +1,16 @@
+import os
+import sys
 import tkinter as tk
 from tkinter import ttk
 from src.view.Produtos_GUI import Produtos_GUI
 from src.view.Pedidos_GUI import Pedidos_GUI
 
+def get_resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 class App(tk.Frame):
     def __init__(self, master=None):
@@ -15,7 +23,7 @@ class App(tk.Frame):
         self.master.geometry("480x270+400+200")
         self.master.resizable(False, False)
         self.master.configure(bg="gray25")
-        self.master.iconbitmap("src/data/afghanistan.ico")
+        self.master.iconbitmap(get_resource_path("src/data/afghanistan.ico"))
 
     def aplly_widgets(self):
         self.master.grid_rowconfigure(0, weight=10)

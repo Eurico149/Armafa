@@ -1,8 +1,18 @@
+import os
 import sqlite3 as sq
+import sys
+
 from src.model.Cliente_repository import Cliente_repository as Cr
 from src.model.Pedido import Pedido
 from src.model.Produto import Produto
 from src.model.Singleton import SingletonMeta
+
+def get_resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 
 class Pedido_repository(metaclass=SingletonMeta):
@@ -13,7 +23,7 @@ class Pedido_repository(metaclass=SingletonMeta):
 
     def __get_pedidos(self):
         consulta = f"SELECT id_ped, id_cli, data, desconto FROM pedidos"
-        with sq.connect("src/data/dataBase.db") as conn:
+        with sq.connect(get_resource_path("src/data/dataBase.db")) as conn:
             cur = conn.cursor()
             res = cur.execute(consulta)
 
@@ -24,7 +34,7 @@ class Pedido_repository(metaclass=SingletonMeta):
 
     def add_pedido(self, p: Pedido):
         consulta = f"INSERT INTO pedidos(id_ped, id_cli, data, desconto) VALUES (?, ?, ?, ?)"
-        with sq.connect("src/data/dataBase.db") as conn:
+        with sq.connect(get_resource_path("src/data/dataBase.db")) as conn:
             cur = conn.cursor()
             data = p.id_ped, p.cliente.id_cli, p.data, p.desconto
             cur.execute(consulta, data)
@@ -38,7 +48,7 @@ class Pedido_repository(metaclass=SingletonMeta):
         if id_ped in self.__pedidos:
             consulta1 = f"DELETE FROM pedidos WHERE id_ped={id_ped}"
             consulta2 = f"DELETE FROM pro_ped WHERE id_ped={id_ped}"
-            with sq.connect("src/data/dataBase.db") as conn:
+            with sq.connect(get_resource_path("src/data/dataBase.db")) as conn:
                 cur = conn.cursor()
                 cur.execute(consulta2)
                 cur.execute(consulta1)
@@ -60,7 +70,7 @@ class Pedido_repository(metaclass=SingletonMeta):
     def change_pedido(self, p: Pedido):
         consulta1 = "UPDATE pedidos SET id_cli=?, data=?, desconto=? WHERE id_ped=?"
         consulta2 = f"DELETE FROM pro_ped WHERE id_ped={p.id_ped}"
-        with sq.connect("src/data/dataBase.db") as conn:
+        with sq.connect(get_resource_path("src/data/dataBase.db")) as conn:
             cur = conn.cursor()
             cur.execute(consulta2)
             cur.execute(consulta1, (p.cliente.id_cli, p.data, p.desconto, p.id_ped))
@@ -70,7 +80,7 @@ class Pedido_repository(metaclass=SingletonMeta):
             data.append((p.id_ped, p.produtos[i][1].id_pro, p.produtos[i][1].valor, p.produtos[i][0]))
 
         consulta = f"INSERT INTO pro_ped(id_ped, id_pro, valor_individual, quantidade) VALUES (?, ?, ?, ?)"
-        with sq.connect("src/data/dataBase.db") as conn:
+        with sq.connect(get_resource_path("src/data/dataBase.db")) as conn:
             cur = conn.cursor()
             cur.executemany(consulta, data)
 
@@ -86,7 +96,7 @@ class Pedido_repository(metaclass=SingletonMeta):
     def add_pro_pre(self, id_ped: int, produto: tuple[int, Produto]):
         if id_ped in self.__pedidos:
             consulta = f"INSERT INTO pro_ped VALUES (?, ?, ?, ?)"
-            with sq.connect("src/data/dataBase.db") as conn:
+            with sq.connect(get_resource_path("src/data/dataBase.db")) as conn:
                 cur = conn.cursor()
                 data = (id_ped, produto[1].id_pro, produto[1].valor, produto[0])
                 cur.execute(consulta, data)
@@ -97,7 +107,7 @@ class Pedido_repository(metaclass=SingletonMeta):
 
     def __get_pedido_produtos(self, id_ped):
         consulta = f"SELECT quantidade, id_pro, nome, valor_individual FROM pedido_quantidade_produto WHERE id_ped={id_ped}"
-        with sq.connect("src/data/dataBase.db") as conn:
+        with sq.connect(get_resource_path("src/data/dataBase.db")) as conn:
             cur = conn.cursor()
             res = cur.execute(consulta)
         return [(p[0], Produto(int(p[1]), p[2], float(p[3]))) for p in res]
