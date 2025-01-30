@@ -21,6 +21,7 @@ entre eles.
 <hr>
 
 ## Como Rodar 🚀
+Recomendo a criação de um ambiente virtual
 ```
 # Clone o Repositorio
 git clone https://github.com/Eurico149/Armafa
@@ -30,8 +31,9 @@ cd Armafa
 pip install -r requirementes.txt
 
 # Inicie o main
-python3 main.py
+python main.py
 ```
+
 ## Criar Executavel 🔧
 ```
 pyinstaller --name "Armafa" --windowed --icon="./src/data/afghanistan.ico" --add-data "src/data;src/data" main.py
