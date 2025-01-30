@@ -2,3 +2,6 @@
 __pycache__/
 *.pyc
 /src/data/dataBase_arquive_backup.sql
+/dist
+/build
+Armafa.spec
