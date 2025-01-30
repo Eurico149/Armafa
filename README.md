@@ -32,7 +32,7 @@ pip install -r requirementes.txt
 # Inicie o main
 python3 main.py
 ```
-<h2>Criar Executavel 🔧</h2>
+## Criar Executavel 🔧
 ```
 pyinstaller --name "Armafa" --windowed --icon="./src/data/afghanistan.ico" --add-data "src/data;src/data" main.py
 ```
