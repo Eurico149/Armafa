@@ -46,10 +46,11 @@ Armafa/
 │   ├─── data/
 │   ├─── model/
 │   └─── view/
-├── main.py
 ├── .gitignore
-├── README.md
 ├── Armafa
+├── LICENSE
+├── main.py
+├── README.md
 └── requirementes.txt
 ```
 <hr>
