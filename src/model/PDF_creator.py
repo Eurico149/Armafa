@@ -224,7 +224,6 @@ class PDF_creator:
         self._cv.drawString(100, altura - 120, "Cliente: " + self._cliente.nome)
         self._cv.drawString(131, altura - 121, 50 * "_")
 
-        # cnpj = "20.031.219/0002-46"
         cnpj = self._cliente.cpf_cnpj
         if len(cnpj) == 11:
             cnpj = cnpj[0:3] + "." + cnpj[3:6] + "." + cnpj[6:9] + "-" + cnpj[9:]

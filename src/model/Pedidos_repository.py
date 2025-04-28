@@ -1,11 +1,11 @@
 import os
 import sqlite3 as sq
 import sys
-
 from src.model.Cliente_repository import Cliente_repository as Cr
 from src.model.Pedido import Pedido
 from src.model.Produto import Produto
 from src.model.Singleton import SingletonMeta
+
 
 def get_resource_path(relative_path):
     if hasattr(sys, '_MEIPASS'):
@@ -19,6 +19,7 @@ class Pedido_repository(metaclass=SingletonMeta):
 
     def __init__(self):
         if not hasattr(self, "_initialized"):
+            print("Iniciando Pedido_repository")
             self.__pedidos = self.__get_pedidos()
 
     def __get_pedidos(self):

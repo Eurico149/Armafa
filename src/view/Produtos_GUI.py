@@ -13,7 +13,7 @@ def get_resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
-# Atualizar listbox apos produto adder
+
 class Produtos_GUI:
 
     def __init__(self, root: tk.Tk, funcao):

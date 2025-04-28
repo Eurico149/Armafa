@@ -17,6 +17,7 @@ class Cliente_repository(metaclass=SingletonMeta):
 
     def __init__(self):
         if not hasattr(self, "_initialized"):
+            print("cliente_repository")
             self.__clientes = self.__get_clientes()
 
     def __get_clientes(self):

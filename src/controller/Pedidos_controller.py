@@ -10,7 +10,6 @@ from src.model.Produto import Produto
 
 class Pedidos_controller:
 
-    # 12/02/2022
     def __validar_data(self, data: str) -> bool:
         if len(data) != 10:
             return False

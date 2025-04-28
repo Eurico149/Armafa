@@ -18,6 +18,7 @@ class Produto_repository(metaclass=SingletonMeta):
 
     def __init__(self):
         if not hasattr(self, "_initialized"):
+            print("inicializando Produto_repository")
             self.__produtos: dict = self.__get_produtos()
 
     def __get_produtos(self):

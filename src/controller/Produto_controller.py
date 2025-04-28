@@ -3,6 +3,7 @@ from src.model.Produto import Produto
 from src.model.Produto_repository import Produto_repository as Por
 from src.model.Pedidos_repository import Pedido_repository as Per
 
+
 class Produto_controller:
 
     def get_produtos(self, ref: str) -> list[Produto]:
@@ -47,7 +48,7 @@ class Produto_controller:
         if nome == "":
             raise ArmafaExeption("O Nome do Produto Não Foi Preenchido!")
         if len(nome) > 36:
-            raise("O Nome do Produto Não deve Utrapassar 36 Caracteres!")
+            raise ArmafaExeption("O Nome do Produto Não deve Utrapassar 36 Caracteres!")
         try:
             Por().change_produto(int(id_pro), nome, float(valor))
         except:

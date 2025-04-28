@@ -6,12 +6,14 @@ from src.controller.Cliente_contorller import Cliente_controller as Clc
 from src.model.ArmafaExeption import ArmafaExeption
 from src.model.Cliente import Cliente
 
+
 def get_resource_path(relative_path):
     if hasattr(sys, '_MEIPASS'):
         base_path = sys._MEIPASS
     else:
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
+
 
 class Cliente_GUI:
 

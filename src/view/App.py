@@ -5,6 +5,7 @@ from tkinter import ttk
 from src.view.Produtos_GUI import Produtos_GUI
 from src.view.Pedidos_GUI import Pedidos_GUI
 
+
 def get_resource_path(relative_path):
     if hasattr(sys, '_MEIPASS'):
         base_path = sys._MEIPASS
