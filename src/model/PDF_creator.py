@@ -177,7 +177,7 @@ class PDF_creator:
 
         self._cv.roundRect(152, altura - 70, 290, 50, 5)
 
-        text = "Armafa Fabrocação de Ferro LTDA."
+        text = "Armaca Fabrocação de Ferro LTDA."
         aux = self._centralise(152, 442, text)
         self._cv.drawString(aux, altura - 30, text)
 
