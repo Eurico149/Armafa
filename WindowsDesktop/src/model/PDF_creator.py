@@ -3,8 +3,8 @@ import os
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
-from src.model.Cliente import Cliente
-from src.model.Pedido import Pedido
+from WindowsDesktop.src.model.Cliente import Cliente
+from WindowsDesktop.src.model.Pedido import Pedido
 from os import startfile, path
 
 

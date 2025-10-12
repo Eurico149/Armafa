@@ -1,7 +1,7 @@
-from src.model.ArmafaExeption import ArmafaExeption
-from src.model.Cliente import Cliente
-from src.model.Cliente_repository import Cliente_repository as Cr
-from src.model.Pedidos_repository import Pedido_repository as Per
+from WindowsDesktop.src.model.ArmafaExeption import ArmafaExeption
+from WindowsDesktop.src.model.Cliente import Cliente
+from WindowsDesktop.src.model.Cliente_repository import Cliente_repository as Cr
+from WindowsDesktop.src.model.Pedidos_repository import Pedido_repository as Per
 
 
 class Cliente_controller:

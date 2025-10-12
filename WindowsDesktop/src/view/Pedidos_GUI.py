@@ -3,19 +3,19 @@ import sys
 import tkinter as tk
 from tkinter import ttk, Toplevel, messagebox, StringVar
 
-from src.controller.Cliente_contorller import Cliente_controller as Clc
-from src.controller.Pedidos_controller import Pedidos_controller as Pec
-from src.controller.Produto_controller import Produto_controller as Prc
-from src.model.ArmafaExeption import ArmafaExeption
-from src.model.Produto import Produto
-from src.model.Pedido import Pedido
-from src.view.Cliente_GUI import Cliente_GUI
+from WindowsDesktop.src.controller.Cliente_contorller import Cliente_controller as Clc
+from WindowsDesktop.src.controller.Pedidos_controller import Pedidos_controller as Pec
+from WindowsDesktop.src.controller.Produto_controller import Produto_controller as Prc
+from WindowsDesktop.src.model.ArmafaExeption import ArmafaExeption
+from WindowsDesktop.src.model.Produto import Produto
+from WindowsDesktop.src.model.Pedido import Pedido
+from WindowsDesktop.src.view.Cliente_GUI import Cliente_GUI
 
 def get_resource_path(relative_path):
     if hasattr(sys, '_MEIPASS'):
         base_path = sys._MEIPASS
     else:
-        base_path = os.path.abspath(".")
+        base_path = os.path.abspath("")
     return os.path.join(base_path, relative_path)
 
 class Pedidos_GUI:

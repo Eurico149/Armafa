@@ -1,7 +1,7 @@
-from src.model.ArmafaExeption import ArmafaExeption
-from src.model.Produto import Produto
-from src.model.Produto_repository import Produto_repository as Por
-from src.model.Pedidos_repository import Pedido_repository as Per
+from WindowsDesktop.src.model.ArmafaExeption import ArmafaExeption
+from WindowsDesktop.src.model.Produto import Produto
+from WindowsDesktop.src.model.Produto_repository import Produto_repository as Por
+from WindowsDesktop.src.model.Pedidos_repository import Pedido_repository as Per
 
 class Produto_controller:
 

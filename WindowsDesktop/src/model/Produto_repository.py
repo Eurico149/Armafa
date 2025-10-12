@@ -2,15 +2,15 @@ import os
 import sqlite3 as sq
 import sys
 
-from src.model.Produto import Produto
-from src.model.Pedidos_repository import Pedido_repository as Per
-from src.model.Singleton import SingletonMeta
+from WindowsDesktop.src.model.Produto import Produto
+from WindowsDesktop.src.model.Pedidos_repository import Pedido_repository as Per
+from WindowsDesktop.src.model.Singleton import SingletonMeta
 
 def get_resource_path(relative_path):
     if hasattr(sys, '_MEIPASS'):
         base_path = sys._MEIPASS
     else:
-        base_path = os.path.abspath(".")
+        base_path = os.path.abspath("")
     return os.path.join(base_path, relative_path)
 
 
