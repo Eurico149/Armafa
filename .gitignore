@@ -1,7 +1,11 @@
-/.idea/
-__pycache__/
+*/.idea/
+.idea/
+*/__pycache__/
 *.pyc
 /WindowsDesktop/src/data/dataBase_arquive_backup.sql
-/dist
-/build
+*/dist
+*/build
 Armafa.spec
+*/.venv/
+*/.env
+
