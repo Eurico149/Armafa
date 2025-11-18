@@ -2,9 +2,9 @@ import os
 import sys
 import tkinter as tk
 from tkinter import ttk, messagebox
-from WindowsDesktop.src.controller.Cliente_contorller import Cliente_controller as Clc
-from WindowsDesktop.src.model.ArmafaExeption import ArmafaExeption
-from WindowsDesktop.src.model.Cliente import Cliente
+from src.controller.Cliente_contorller import Cliente_controller as Clc
+from src.exception.ArmafaExeption import ArmafaExeption
+from src.model.Cliente import Cliente
 
 def get_resource_path(relative_path):
     if hasattr(sys, '_MEIPASS'):

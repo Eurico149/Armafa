@@ -1,5 +1,5 @@
-from WindowsDesktop.src.model.Cliente import Cliente
-from WindowsDesktop.src.model.Produto import Produto
+from src.model.Cliente import Cliente
+from src.model.Produto import Produto
 
 
 class Pedido:

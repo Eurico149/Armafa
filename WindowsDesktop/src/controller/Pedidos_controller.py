@@ -1,11 +1,11 @@
-from datetime import datetime
 import pytz
-from WindowsDesktop.src.model.ArmafaExeption import ArmafaExeption
-from WindowsDesktop.src.model.Cliente_repository import Cliente_repository as Clr
-from WindowsDesktop.src.model.Pedido import Pedido
-from WindowsDesktop.src.model.Pedidos_repository import Pedido_repository as Pr
-from WindowsDesktop.src.model.PDF_creator import PDF_creator, Pdf_espelho
-from WindowsDesktop.src.model.Produto import Produto
+from datetime import datetime
+from src.exception.ArmafaExeption import ArmafaExeption
+from src.repository.Cliente_repository import Cliente_repository as Clr
+from src.model.Pedido import Pedido
+from src.repository.Pedidos_repository import Pedido_repository as Pr
+from src.model.PDF_creator import PDF_creator, Pdf_espelho
+from src.model.Produto import Produto
 
 
 class Pedidos_controller:

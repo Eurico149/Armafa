@@ -2,8 +2,8 @@ import os
 import sys
 import tkinter as tk
 from tkinter import ttk
-from WindowsDesktop.src.view.Produtos_GUI import Produtos_GUI
-from WindowsDesktop.src.view.Pedidos_GUI import Pedidos_GUI
+from src.view.Produtos_GUI import Produtos_GUI
+from src.view.Pedidos_GUI import Pedidos_GUI
 
 def get_resource_path(relative_path):
     if hasattr(sys, '_MEIPASS'):
