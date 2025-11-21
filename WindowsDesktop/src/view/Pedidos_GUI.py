@@ -2,12 +2,12 @@ import os
 import sys
 import tkinter as tk
 from tkinter import ttk, Toplevel, messagebox, StringVar
-from src.controller.Cliente_contorller import Cliente_controller as Clc
-from src.controller.Pedidos_controller import Pedidos_controller as Pec
-from src.controller.Produto_controller import Produto_controller as Prc
-from src.exception.ArmafaExeption import ArmafaExeption
-from src.model.Produto import Produto
-from src.model.Pedido import Pedido
+from src.controller import Cliente_controller as Clc
+from src.controller import Pedidos_controller as Pec
+from src.controller import Produto_controller as Prc
+from src.exception import ArmafaExeption
+from src.model import Produto
+from src.model import Pedido
 from src.view.Cliente_GUI import Cliente_GUI
 
 def get_resource_path(relative_path):
@@ -599,16 +599,6 @@ class Pedido_changer:
             messagebox.showerror("ERROR", str(aeer), parent=self.janela)
         except Exception:
             messagebox.showerror("ERROR", "ERROR Inesperado!", parent=self.janela)
-
-        if Pec().change_pedido(self.__pedido.id_ped, id_cli, data, self.__produtos, desconto):
-            messagebox.showinfo("Armafa", "Pedido Modificado Com Sucesso!", parent=self.janela)
-            if self.__pdf_var.get() == 1:
-                Pec().create_pdf(self.__pedido.id_ped)
-            if self.__esp_var.get() == 1:
-                Pec().create_espelho(self.__pedido.id_ped)
-            self.janela.destroy()
-        else:
-            messagebox.showerror("ERROR", "Não Foi Possivel Modificar Esse pedido!", parent=self.janela)
 
 
 class Quantidade_getter:

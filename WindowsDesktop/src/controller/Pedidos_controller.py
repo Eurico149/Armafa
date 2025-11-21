@@ -1,11 +1,11 @@
 import pytz
 from datetime import datetime
-from src.exception.ArmafaExeption import ArmafaExeption
-from src.repository.Cliente_repository import Cliente_repository as Clr
-from src.model.Pedido import Pedido
-from src.repository.Pedidos_repository import Pedido_repository as Pr
-from src.model.PDF_creator import PDF_creator, Pdf_espelho
-from src.model.Produto import Produto
+from src.exception import ArmafaExeption
+from src.repository import Cliente_repository as Clr
+from src.model import Pedido
+from src.repository import Pedido_repository as Pr
+from src.model import PDF_creator, Pdf_espelho
+from src.model import Produto
 
 
 class Pedidos_controller:
@@ -66,6 +66,7 @@ class Pedidos_controller:
         if desconto < 0:
             raise ArmafaExeption("Desconto Deve Ser Maior que Zero!")
         ped = Pedido(id_ped, cliente, date, p, desconto)
+        print(ped)
         try:
             Pr().change_pedido(ped)
         except:

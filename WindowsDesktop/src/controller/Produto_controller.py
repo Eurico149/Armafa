@@ -1,7 +1,7 @@
-from src.exception.ArmafaExeption import ArmafaExeption
-from src.model.Produto import Produto
-from src.repository.Produto_repository import Produto_repository as Por
-from src.repository.Pedidos_repository import Pedido_repository as Per
+from src.exception import ArmafaExeption
+from src.model import Produto
+from src.repository import Produto_repository as Por
+from src.repository import Pedido_repository as Per
 
 class Produto_controller:
 

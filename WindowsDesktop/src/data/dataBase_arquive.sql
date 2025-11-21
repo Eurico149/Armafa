@@ -15,7 +15,7 @@ CREATE TABLE clientes(
     bairro VARCHAR(40),
     cpf_cnpj VARCHAR(14),
     fone VARCHAR(11),
-    email VARCHAR(80),
+    email VARCHAR(80)
 );
 
 -- data: dd/mm/aaaa
@@ -25,7 +25,7 @@ CREATE TABLE pedidos(
     data CHAR(10),
     desconto INTEGER NOT NULL,
     FOREIGN KEY (id_cli) REFERENCES clientes(id_cli),
-    CONSTRAINT tamanho_data CHECK LENGTH(data) = 10
+    CONSTRAINT tamanho_data CHECK (LENGTH(data) = 10)
 );
 
 CREATE TABLE pro_ped(
@@ -35,7 +35,7 @@ CREATE TABLE pro_ped(
     quantidade INTEGER NOT NULL,
     FOREIGN KEY (id_pro) REFERENCES produtos(id_pro),
     FOREIGN KEY (id_ped) REFERENCES pedidos(id_ped),
-    CONSTRAINT quantidade_check CHECK quantidade >= 0
+    CONSTRAINT quantidade_check CHECK (quantidade >= 0)
 );
 
 CREATE VIEW pedido_quantidade_produto AS

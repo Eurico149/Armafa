@@ -2,9 +2,9 @@ import os
 import sys
 import tkinter as tk
 from tkinter import ttk, Toplevel, messagebox, StringVar
-from src.controller.Produto_controller import Produto_controller as Prc
-from src.exception.ArmafaExeption import ArmafaExeption
-from src.model.Produto import Produto
+from src.controller import Produto_controller as Prc
+from src.exception import ArmafaExeption
+from src.model import Produto
 
 def get_resource_path(relative_path):
     if hasattr(sys, '_MEIPASS'):

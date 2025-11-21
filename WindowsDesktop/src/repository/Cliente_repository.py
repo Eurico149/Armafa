@@ -1,8 +1,8 @@
 import os
 import sqlite3 as sq
 import sys
-from src.model.Cliente import Cliente
-from src.model.Singleton import SingletonMeta
+from src.model import Cliente
+from src.repository.Singleton import SingletonMeta
 
 def get_resource_path(relative_path):
     if hasattr(sys, '_MEIPASS'):

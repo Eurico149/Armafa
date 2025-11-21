@@ -1,5 +1,5 @@
-from src.model.Cliente import Cliente
-from src.model.Produto import Produto
+from src.model import Cliente
+from src.model import Produto
 
 
 class Pedido:

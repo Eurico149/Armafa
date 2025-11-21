@@ -1,7 +1,7 @@
-from src.exception.ArmafaExeption import ArmafaExeption
-from src.model.Cliente import Cliente
-from src.repository.Cliente_repository import Cliente_repository as Cr
-from src.repository.Pedidos_repository import Pedido_repository as Per
+from src.exception import ArmafaExeption
+from src.model import Cliente
+from src.repository import Cliente_repository as Cr
+from src.repository import Pedido_repository as Per
 
 
 class Cliente_controller:
