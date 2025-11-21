@@ -1,0 +1,5 @@
+from .ProdutosEntity import get_produtos_entity
+from .ClienteEntity import get_clientes_entity
+from .PedidosEntity import get_pedidos_entity
+from .PedidosQuantidadeProdutos import get_pedido_quantidade_produto_entity
+from .ProdutoPedidoEntity import get_produtos_pedidos_entity

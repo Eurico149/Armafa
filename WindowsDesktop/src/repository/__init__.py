@@ -1,3 +1,3 @@
-from .Cliente_repository import Cliente_repository
-from .Pedidos_repository import Pedido_repository
-from .Produto_repository import Produto_repository
+from .ClienteRepository import ClienteRepository
+from .PedidoRepository import PedidoRepository
+from .ProdutoRepository import ProdutoRepository

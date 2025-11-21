@@ -1,3 +1,7 @@
+from dataclasses import dataclass
+
+
+@dataclass
 class Produto:
     def __init__(self, id_pro: int, nome: str, valor: float):
         self.id_pro = id_pro

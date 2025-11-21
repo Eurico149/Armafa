@@ -40,5 +40,6 @@ CREATE TABLE pro_ped(
 
 CREATE VIEW pedido_quantidade_produto AS
 SELECT pp.id_ped, pp.id_pro, pro.nome, pp.quantidade, pp.valor_individual
-FROM pedidos AS ped, produtos AS pro, pro_ped AS pp
-WHERE ped.id_ped=pp.id_ped AND pp.id_pro=pro.id_pro;
+FROM pedidos AS ped
+JOIN pro_ped AS pp ON ped.id_ped = pp.id_ped
+JOIN produtos AS pro ON pp.id_pro = pro.id_pro;

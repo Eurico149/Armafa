@@ -1,3 +1,7 @@
+from dataclasses import dataclass
+
+
+@dataclass
 class Cliente:
 
     def __init__(self, id_cli: int, nome: str, cep: str, endereco: str, uf: str, cidade: str, bairro: str, cpf_cnpj: str, fone: str, email: str):

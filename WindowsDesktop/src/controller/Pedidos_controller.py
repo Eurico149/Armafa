@@ -1,9 +1,9 @@
 import pytz
 from datetime import datetime
 from src.exception import ArmafaExeption
-from src.repository import Cliente_repository as Clr
+from src.repository import ClienteRepository as Clr
 from src.model import Pedido
-from src.repository import Pedido_repository as Pr
+from src.repository import PedidoRepository as Pr
 from src.model import PDF_creator, Pdf_espelho
 from src.model import Produto
 
@@ -44,7 +44,7 @@ class Pedidos_controller:
             desconto = int(desconto)
         try:
             Pr().add_pedido(Pedido(id_ped, cliente, date, p, desconto))
-        except:
+        except Exception as err:
             raise ArmafaExeption("Erro Ao Cadastrar Pedido!")
 
 
@@ -66,7 +66,6 @@ class Pedidos_controller:
         if desconto < 0:
             raise ArmafaExeption("Desconto Deve Ser Maior que Zero!")
         ped = Pedido(id_ped, cliente, date, p, desconto)
-        print(ped)
         try:
             Pr().change_pedido(ped)
         except:

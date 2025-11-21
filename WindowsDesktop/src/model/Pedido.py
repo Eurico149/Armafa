@@ -1,15 +1,18 @@
 from src.model import Cliente
 from src.model import Produto
+from dataclasses import dataclass
 
 
+@dataclass
 class Pedido:
     def __init__(self, id_ped: int, cliente: Cliente, data: str, produtos: list[tuple[int, Produto]], desconto: int):
         self.id_ped = id_ped
         self.cliente = cliente
+        self.data = data
         self.produtos = produtos
         self.valor_total = sum([i[0] * i[1].valor for i in produtos])
         self.desconto = desconto
-        self.data = data
+
 
     def get_produto(self, id_pro: int):
         for i in self.produtos:
