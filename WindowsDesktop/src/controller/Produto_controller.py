@@ -8,9 +8,11 @@ class Produto_controller:
     def get_produtos(self, ref: str) -> list[Produto]:
         if ref.isnumeric():
             saida = Por().get_produto(int(ref))
+
             if not saida:
                 return []
             return [saida]
+
         return Por().get_produtos_by_name(ref)
 
     def get_produto(self, id_pro) -> Produto:
