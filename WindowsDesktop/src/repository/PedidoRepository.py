@@ -1,22 +1,20 @@
 from sqlalchemy import select, insert, delete, update
-from src.repository import ClienteRepository as Cr
 from src.model import Pedido, Produto
-from src.repository.Singleton import SingletonMeta
+from src.repository import ClienteRepository
 from src.repository.DBConfig import DBConfig
 from src.entity import get_pedidos_entity, get_produtos_pedidos_entity, get_pedido_quantidade_produto_entity
 from src.exception import ArmafaExeption
 
 
-class PedidoRepository(metaclass=SingletonMeta):
+class PedidoRepository:
 
-    def __init__(self):
-        if not hasattr(self, "_initialized"):
-            dbconfig = DBConfig()
-            self.__engine = dbconfig.engine
-            self.__pedidos_table = get_pedidos_entity(dbconfig.metadata)
-            self.__produtos_pedidos_table = get_produtos_pedidos_entity(dbconfig.metadata)
-            self.__pedidos_quantidade_produto_table = get_pedido_quantidade_produto_entity(dbconfig.metadata, dbconfig.engine)
-            self.__pedidos = self.__get_pedidos()
+    def __init__(self, dbconfig: DBConfig, cliente_repo: ClienteRepository):
+        self.__cliente_repo = cliente_repo
+        self.__engine = dbconfig.engine
+        self.__pedidos_table = get_pedidos_entity(dbconfig.metadata)
+        self.__produtos_pedidos_table = get_produtos_pedidos_entity(dbconfig.metadata)
+        self.__pedidos_quantidade_produto_table = get_pedido_quantidade_produto_entity(dbconfig.metadata, dbconfig.engine)
+        self.__pedidos = self.__get_pedidos()
 
     def __get_pedidos(self):
         with self.__engine.connect() as conn:
@@ -25,7 +23,7 @@ class PedidoRepository(metaclass=SingletonMeta):
 
         pedidos = {}
         for p in res:
-            pedidos[p.id_ped] = Pedido(p.id_ped, Cr().get_cliente(p.id_cli), p.data, self.__get_pedido_produtos(p.id_ped), p.desconto)
+            pedidos[p.id_ped] = Pedido(p.id_ped, self.__cliente_repo.get_cliente(p.id_cli), p.data, self.__get_pedido_produtos(p.id_ped), p.desconto)
         return pedidos
 
     def add_pedido(self, p: Pedido):

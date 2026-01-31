@@ -1,18 +1,15 @@
 from sqlalchemy import delete, select, insert, update
 from src.model import Cliente
-from src.repository.Singleton import SingletonMeta
 from src.repository.DBConfig import DBConfig
 from src.entity import get_clientes_entity
 
 
-class ClienteRepository(metaclass=SingletonMeta):
+class ClienteRepository:
 
-    def __init__(self):
-        if not hasattr(self, "_initialized"):
-            dbconfig = DBConfig()
-            self.__clientes_table = get_clientes_entity(dbconfig.metadata)
-            self.__engine = dbconfig.engine
-            self.__clientes = self.__get_clientes()
+    def __init__(self, dbconfig: DBConfig):
+        self.__clientes_table = get_clientes_entity(dbconfig.metadata)
+        self.__engine = dbconfig.engine
+        self.__clientes = self.__get_clientes()
 
     def __get_clientes(self):
         with self.__engine.connect() as conn:

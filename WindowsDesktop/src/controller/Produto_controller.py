@@ -1,22 +1,26 @@
 from src.exception import ArmafaExeption
 from src.model import Produto
-from src.repository import ProdutoRepository as Por
-from src.repository import PedidoRepository as Per
+from src.repository import PedidoRepository, ProdutoRepository
+
 
 class Produto_controller:
 
+    def __init__(self, produto_repo: ProdutoRepository, pedido_repo: PedidoRepository):
+        self.__pedido_repo = pedido_repo
+        self.__produto_repo = produto_repo
+
     def get_produtos(self, ref: str) -> list[Produto]:
         if ref.isnumeric():
-            saida = Por().get_produto(int(ref))
+            saida = self.__produto_repo.get_produto(int(ref))
 
             if not saida:
                 return []
             return [saida]
 
-        return Por().get_produtos_by_name(ref)
+        return self.__produto_repo.get_produtos_by_name(ref)
 
     def get_produto(self, id_pro) -> Produto:
-        return Por().get_produto(id_pro)
+        return self.__produto_repo.get_produto(id_pro)
 
     def add_produto(self, id_pro, nome, valor: str) -> None:
         if nome == "":
@@ -29,15 +33,15 @@ class Produto_controller:
         if valor.count(".") > 1 or (valor.count(".") == 1 and 0 > len(valor.split(".")[1]) > 2):
             raise ArmafaExeption("Valor Invalido!")
         try:
-            Por().add_produto(Produto(int(id_pro), nome, float(valor)))
+            self.__produto_repo.add_produto(Produto(int(id_pro), nome, float(valor)))
         except:
             raise ArmafaExeption("Erro Ao Cadastrar Produto!")
 
     def del_produto(self, id_pro) -> None:
-        if Per().produto_in_pedidos(id_pro):
+        if self.__pedido_repo.produto_in_pedidos(id_pro):
             raise ArmafaExeption("Impossivel Deletar Produto, o Proprio Ja Esta Cadastrado em um Pedido!")
         try:
-            Por().del_produto(id_pro)
+            self.__produto_repo.del_produto(id_pro)
         except:
             raise ArmafaExeption("Erro Ao Deletar Produto!")
 
@@ -51,10 +55,10 @@ class Produto_controller:
         if len(nome) > 36:
             raise("O Nome do Produto Não deve Utrapassar 36 Caracteres!")
         try:
-            Por().change_produto(int(id_pro), nome, float(valor))
+            self.__produto_repo.change_produto(int(id_pro), nome, float(valor))
         except:
             raise ArmafaExeption("Erro ao Mudar Pedido!")
 
     def get_max_id(self) -> int:
-        saida = Por().get_max_id() + 1
+        saida = self.__produto_repo.get_max_id() + 1
         return saida

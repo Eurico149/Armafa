@@ -18,6 +18,7 @@ class ContentFrame(ctk.CTkFrame):
 
         if self._search_bar is not None:
             self._search_bar.destroy()
+
         self._search_bar = ctk.CTkEntry(self,
                                         fg_color="#EFEFEF",
                                         text_color="#000000",

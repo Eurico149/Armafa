@@ -1,20 +1,18 @@
 from sqlalchemy import select, insert, update, delete
 from src.model import Produto
-from src.repository import PedidoRepository as Per
-from src.repository.Singleton import SingletonMeta
+from src.repository import PedidoRepository
 from src.repository.DBConfig import DBConfig
 from src.entity import get_produtos_entity, get_pedido_quantidade_produto_entity
 
 
-class ProdutoRepository(metaclass=SingletonMeta):
+class ProdutoRepository:
 
-    def __init__(self):
-        if not hasattr(self, "_initialized"):
-            dbconfig = DBConfig()
-            self.__engine = dbconfig.engine
-            self.__produtos_table = get_produtos_entity(dbconfig.metadata)
-            self.__pedido_quantidade_produto_table = get_pedido_quantidade_produto_entity(dbconfig.metadata, dbconfig.engine)
-            self.__produtos = self.__get_produtos()
+    def __init__(self, dbconfig: DBConfig, pedido_repo: PedidoRepository):
+        self.__pedido_repo = pedido_repo
+        self.__engine = dbconfig.engine
+        self.__produtos_table = get_produtos_entity(dbconfig.metadata)
+        self.__pedido_quantidade_produto_table = get_pedido_quantidade_produto_entity(dbconfig.metadata, dbconfig.engine)
+        self.__produtos = self.__get_produtos()
 
     def __get_produtos(self):
         with self.__engine.connect() as conn:
@@ -57,7 +55,7 @@ class ProdutoRepository(metaclass=SingletonMeta):
             conn.commit()
 
         self.__produtos[id_prod] = Produto(id_prod, nome, valor)
-        Per().change_name_produto(id_prod, nome)
+        self.__pedido_repo.change_name_produto(id_prod, nome)
 
     def del_produto(self, id_pro):
         with self.__engine.connect() as conn:

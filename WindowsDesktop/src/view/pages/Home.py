@@ -1,14 +1,17 @@
 import customtkinter as ctk
+from src import SystemRoot
 from src.view.components import Header, ContentFrame
 
 
 class Home(ctk.CTk):
 
-    def __init__(self):
+    def __init__(self, system_root: SystemRoot):
         super().__init__(fg_color="#555555")
         self.geometry("1280x720")
         self.title("Armaca")
         self.minsize(800, 450)
+
+        self.__system_root = system_root
 
         self.content = None
 

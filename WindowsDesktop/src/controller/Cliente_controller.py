@@ -1,10 +1,13 @@
 from src.exception import ArmafaExeption
 from src.model import Cliente
-from src.repository import ClienteRepository as Cr
-from src.repository import PedidoRepository as Per
+from src.repository import ClienteRepository, PedidoRepository
 
 
 class Cliente_controller:
+
+    def __init__(self, cliente_repo: ClienteRepository, pedido_repo: PedidoRepository):
+        self.__cliente_repo = cliente_repo
+        self.__pedido_repo = pedido_repo
 
     def __strip(self, ent: str) -> str:
         saida = ent.replace(" ", "").replace(".", "").replace(",", "").replace("-", "").replace("_", "")
@@ -37,15 +40,15 @@ class Cliente_controller:
             raise ArmafaExeption("O Nome do Cliente Deve Ser Preenchido!")
         cliente = Cliente(int(id_cli), nome, cep, endereco, uf, cidade, bairro, cpf_cnpj, fone, email)
         try:
-            Cr().add_cliente(cliente)
+            self.__cliente_repo.add_cliente(cliente)
         except:
             raise ArmafaExeption("Erro Ao Cadastrar Cliente!")
 
     def del_cliente(self, id_cli: int) -> None:
-        if Per().cliente_in_pedidos(id_cli):
+        if self.__pedido_repo.cliente_in_pedidos(id_cli):
             raise ArmafaExeption("Impossive Apagar Cliente, O Mesmo Ja Esta Vincaulado a um Pedido!")
         try:
-            Cr().del_cliente(id_cli)
+            self.__cliente_repo.del_cliente(id_cli)
         except:
             raise ArmafaExeption("Erro Ao Deletar Cliente!")
 
@@ -75,22 +78,22 @@ class Cliente_controller:
             raise ArmafaExeption("O Nome do Cliente Deve Ser Preenchido!")
         cliente = Cliente(int(id_cli), nome, cep, endereco, uf, cidade, bairro, cpf_cnpj, fone, email)
         try:
-            Cr().change_cliente(cliente)
+            self.__cliente_repo.change_cliente(cliente)
         except:
             raise ArmafaExeption("Erro Ao Cadastrar Cliente!")
 
     def get_clientes(self, ref: str) -> list[Cliente]:
         if ref.isdigit():
-            aux = Cr().get_cliente(int(ref))
+            aux = self.__cliente_repo.get_cliente(int(ref))
             if aux:
                 return [aux]
             return []
-        return Cr().get_clientes_by_name(ref)
+        return self.__cliente_repo.get_clientes_by_name(ref)
 
     def get_cliente(self, id_cli: int) -> Cliente:
-        aux = Cr().get_cliente(id_cli)
+        aux = self.__cliente_repo.get_cliente(id_cli)
         if aux:
             return aux
 
     def get_max_id(self) -> int:
-        return Cr().get_max_id() + 1
+        return self.__cliente_repo.get_max_id() + 1

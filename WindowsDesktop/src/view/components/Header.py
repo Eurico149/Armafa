@@ -10,8 +10,9 @@ class Header(ctk.CTkFrame):
         super().__init__(master, **kwargs)
         self.menu_button_is_active = False
         self.__menu_frame = MenuSideBar(self.master,
-                                         fg_color="#272727",
-                                         corner_radius=0)
+                                        default_button="Pedidos",
+                                        fg_color="#272727",
+                                        corner_radius=0)
 
         self._menu_icon = ctk.CTkImage(Image.open("src/view/images/menu_icon.png"), size=(25,25))
         self._settings_icon = ctk.CTkImage(Image.open("src/view/images/settings_icon.png"), size=(25,25))
@@ -60,13 +61,17 @@ class Header(ctk.CTkFrame):
 
 class MenuSideBar(ctk.CTkFrame):
 
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, default_button: str, **kwargs):
         super().__init__(master, **kwargs)
-        self._buttons = []
+        self._buttons = {}
 
         self.font =ctk.CTkFont(family="Inter", size=16)
 
         self._add_widgets()
+
+        if default_button not in self._buttons:
+            raise ValueError(f"Button '{default_button}' not found in MenuSideBar.")
+        self._buttons[default_button].press()
 
     def _add_widgets(self):
         pedidos_button = Button(self,
@@ -77,7 +82,7 @@ class MenuSideBar(ctk.CTkFrame):
                                 border_spacing=6,
                                 command=lambda: self.__orders_button_action([{}]))
         pedidos_button.grid(row=0, column=0, padx=10, pady=(12, 0))
-        self._buttons.append(pedidos_button)
+        self._buttons[pedidos_button.cget("text")] = pedidos_button
 
         products_button = Button(self,
                                  text="Produtos",
@@ -87,7 +92,7 @@ class MenuSideBar(ctk.CTkFrame):
                                  border_spacing=6,
                                  command=lambda: self.__products_button_action([{}]))
         products_button.grid(row=1, column=0, padx=10, pady=9)
-        self._buttons.append(products_button)
+        self._buttons[products_button.cget("text")] = products_button
 
         clients_button = Button(self,
                                 text="Clientes",
@@ -97,11 +102,11 @@ class MenuSideBar(ctk.CTkFrame):
                                 border_spacing=6,
                                 command=lambda: self.__clients_button_action([{}]))
         clients_button.grid(row=2, column=0, padx=10)
-        self._buttons.append(clients_button)
+        self._buttons[clients_button.cget("text")] = clients_button
 
     def __orders_button_action(self, table: list[dict[str, str]]):
         self.master.content.change_content(table)
-        for button in self._buttons:
+        for button in self._buttons.values():
             if button.cget("command") != self.__orders_button_action:
                 if button.is_pressed():
                     button.press()
@@ -109,14 +114,14 @@ class MenuSideBar(ctk.CTkFrame):
 
     def __products_button_action(self, table: list[dict[str, str]]):
         self.master.content.change_content(table)
-        for button in self._buttons:
+        for button in self._buttons.values():
             if button.cget("command") != self.__products_button_action:
                 if button.is_pressed():
                     button.press()
 
     def __clients_button_action(self, table: list[dict[str, str]]):
         self.master.content.change_content(table)
-        for button in self._buttons:
+        for button in self._buttons.values():
             if button.cget("command") != self.__clients_button_action:
                 if button.is_pressed():
                     button.press()
