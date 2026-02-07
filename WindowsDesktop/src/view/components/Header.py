@@ -1,18 +1,23 @@
 import customtkinter as ctk
 from PIL import Image
 
+from src import SystemRoot
+from src.model import Produto, Cliente, Pedido
 from src.view.components.Button import Button
 
 
 class Header(ctk.CTkFrame):
 
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, systemroot: SystemRoot, **kwargs):
         super().__init__(master, **kwargs)
         self.menu_button_is_active = False
         self.__menu_frame = MenuSideBar(self.master,
+                                        systemroot,
                                         default_button="Pedidos",
                                         fg_color="#272727",
                                         corner_radius=0)
+        self.__menu_frame.buttons["Pedidos"].invoke()
+        self.__menu_frame.buttons["Pedidos"].press()
 
         self._menu_icon = ctk.CTkImage(Image.open("src/view/images/menu_icon.png"), size=(25,25))
         self._settings_icon = ctk.CTkImage(Image.open("src/view/images/settings_icon.png"), size=(25,25))
@@ -61,28 +66,26 @@ class Header(ctk.CTkFrame):
 
 class MenuSideBar(ctk.CTkFrame):
 
-    def __init__(self, master, default_button: str, **kwargs):
+    def __init__(self, master, systemroot: SystemRoot, default_button: str, **kwargs):
         super().__init__(master, **kwargs)
-        self._buttons = {}
+        self.__systemroot = systemroot
+        self.buttons = {}
 
         self.font =ctk.CTkFont(family="Inter", size=16)
 
         self._add_widgets()
 
-        if default_button not in self._buttons:
-            raise ValueError(f"Button '{default_button}' not found in MenuSideBar.")
-        self._buttons[default_button].press()
-
     def _add_widgets(self):
+
         pedidos_button = Button(self,
                                 text="Pedidos",
                                 fg_color="transparent",
                                 hover_color="#20446C",
                                 font=self.font,
                                 border_spacing=6,
-                                command=lambda: self.__orders_button_action([{}]))
+                                command=lambda: self.__orders_button_action(self.__systemroot.pedidos_controller.get_pedidos("")))
         pedidos_button.grid(row=0, column=0, padx=10, pady=(12, 0))
-        self._buttons[pedidos_button.cget("text")] = pedidos_button
+        self.buttons[pedidos_button.cget("text")] = pedidos_button
 
         products_button = Button(self,
                                  text="Produtos",
@@ -90,9 +93,9 @@ class MenuSideBar(ctk.CTkFrame):
                                  hover_color="#20446C",
                                  font=self.font,
                                  border_spacing=6,
-                                 command=lambda: self.__products_button_action([{}]))
+                                 command=lambda: self.__products_button_action(self.__systemroot.produtos_controller.get_produtos("")))
         products_button.grid(row=1, column=0, padx=10, pady=9)
-        self._buttons[products_button.cget("text")] = products_button
+        self.buttons[products_button.cget("text")] = products_button
 
         clients_button = Button(self,
                                 text="Clientes",
@@ -100,28 +103,65 @@ class MenuSideBar(ctk.CTkFrame):
                                 hover_color="#20446C",
                                 font=self.font,
                                 border_spacing=6,
-                                command=lambda: self.__clients_button_action([{}]))
+                                command=lambda: self.__clients_button_action(self.__systemroot.cliente_controller.get_clientes("")))
         clients_button.grid(row=2, column=0, padx=10)
-        self._buttons[clients_button.cget("text")] = clients_button
+        self.buttons[clients_button.cget("text")] = clients_button
 
-    def __orders_button_action(self, table: list[dict[str, str]]):
-        self.master.content.change_content(table)
-        for button in self._buttons.values():
+    def __orders_button_action(self, data: list[Pedido]):
+        data.reverse()
+
+        content = {
+            "data": [(p.id_ped, p.data, p.cliente.nome, f"R$  {(9 - len(f"{p.valor_total:.2f}")) * "  "}{p.valor_total:.2f}") for p in data],
+            "meta": {
+                "columns": [
+                    {"name": "ID", "width": 40, "location": "center"},
+                    {"name": "Data", "width": 80, "location": "center"},
+                    {"name": "Cliente", "width": "auto", "location": "w"},
+                    {"name": "Total", "width": 80, "location": "w"}
+                ]
+            }
+        }
+
+        self.master.content.change_content(content)
+        for button in self.buttons.values():
             if button.cget("command") != self.__orders_button_action:
                 if button.is_pressed():
                     button.press()
 
 
-    def __products_button_action(self, table: list[dict[str, str]]):
-        self.master.content.change_content(table)
-        for button in self._buttons.values():
+    def __products_button_action(self, data: list[Produto]):
+        data.reverse()
+        content = {
+            "data": [(p.id_pro, p.nome, f"R$  {(9 - len(f"{p.valor:.2f}")) * "  "}{p.valor:.2f}") for p in data],
+            "meta": {
+                "columns": [
+                    {"name": "ID", "width": 40, "location": "center"},
+                    {"name": "Nome", "width": "auto", "location": "w"},
+                    {"name": "Valor", "width": 80, "location": "w"}
+                ]
+            }
+        }
+
+        self.master.content.change_content(content)
+        for button in self.buttons.values():
             if button.cget("command") != self.__products_button_action:
                 if button.is_pressed():
                     button.press()
 
-    def __clients_button_action(self, table: list[dict[str, str]]):
-        self.master.content.change_content(table)
-        for button in self._buttons.values():
+    def __clients_button_action(self, data: list[Cliente]):
+        data.reverse()
+        content = {
+            "data": [(c.id_cli, c.nome) for c in data],
+            "meta": {
+                "columns": [
+                    {"name": "ID", "width": 40, "location": "center"},
+                    {"name": "Nome", "width": "auto", "location": "w"},
+                ]
+            }
+        }
+
+        self.master.content.change_content(content)
+        for button in self.buttons.values():
             if button.cget("command") != self.__clients_button_action:
                 if button.is_pressed():
                     button.press()

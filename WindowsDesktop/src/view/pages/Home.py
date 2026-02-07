@@ -13,19 +13,16 @@ class Home(ctk.CTk):
 
         self.__system_root = system_root
 
-        self.content = None
-
         self._grid_scheme_configure()
 
         self._add_widgets()
 
     def _add_widgets(self):
-        self._header = Header(self, fg_color="#272727", corner_radius=0)
-        self._header.grid(column=0, row=0, columnspan=2, sticky="nsew")
-
-        self.content = ContentFrame(self, [{}], fg_color="transparent", corner_radius=0)
+        self.content = ContentFrame(self, fg_color="transparent", corner_radius=0)
         self.content.grid(column=1, row=1, sticky="nsew")
 
+        self._header = Header(self, self.__system_root, fg_color="#272727", corner_radius=0)
+        self._header.grid(column=0, row=0, columnspan=2, sticky="nsew")
 
     def _grid_scheme_configure(self):
         self.grid_rowconfigure(0, weight=0)
