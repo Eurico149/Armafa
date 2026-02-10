@@ -13,7 +13,6 @@ class Header(ctk.CTkFrame):
         self.menu_button_is_active = False
         self.__menu_frame = MenuSideBar(self.master,
                                         systemroot,
-                                        default_button="Pedidos",
                                         fg_color="#272727",
                                         corner_radius=0)
         self.__menu_frame.buttons["Pedidos"].invoke()
@@ -66,12 +65,12 @@ class Header(ctk.CTkFrame):
 
 class MenuSideBar(ctk.CTkFrame):
 
-    def __init__(self, master, systemroot: SystemRoot, default_button: str, **kwargs):
+    def __init__(self, master, systemroot: SystemRoot, **kwargs):
         super().__init__(master, **kwargs)
         self.__systemroot = systemroot
         self.buttons = {}
 
-        self.font =ctk.CTkFont(family="Inter", size=16)
+        self.font =ctk.CTkFont(family="Inter", size=14)
 
         self._add_widgets()
 
@@ -84,7 +83,7 @@ class MenuSideBar(ctk.CTkFrame):
                                 font=self.font,
                                 border_spacing=6,
                                 command=lambda: self.__orders_button_action(self.__systemroot.pedidos_controller.get_pedidos("")))
-        pedidos_button.grid(row=0, column=0, padx=10, pady=(12, 0))
+        pedidos_button.grid(row=0, column=0, padx=10, pady=(10, 0))
         self.buttons[pedidos_button.cget("text")] = pedidos_button
 
         products_button = Button(self,
@@ -94,7 +93,7 @@ class MenuSideBar(ctk.CTkFrame):
                                  font=self.font,
                                  border_spacing=6,
                                  command=lambda: self.__products_button_action(self.__systemroot.produtos_controller.get_produtos("")))
-        products_button.grid(row=1, column=0, padx=10, pady=9)
+        products_button.grid(row=1, column=0, padx=10, pady=8)
         self.buttons[products_button.cget("text")] = products_button
 
         clients_button = Button(self,
@@ -110,14 +109,21 @@ class MenuSideBar(ctk.CTkFrame):
     def __orders_button_action(self, data: list[Pedido]):
         data.reverse()
 
+        dto = []
+        for p in data:
+            texto = f"{p.valor_total:,.2f}"
+            texto = texto.replace(",", "X").replace(".", ",").replace("X", ".")
+            valor_total = f"R$ {(10 - len(texto)) * " "}{texto}"
+            dto.append((p.id_ped, p.data, p.cliente.nome, valor_total))
+
         content = {
-            "data": [(p.id_ped, p.data, p.cliente.nome, f"R$  {(9 - len(f"{p.valor_total:.2f}")) * "  "}{p.valor_total:.2f}") for p in data],
+            "data": dto,
             "meta": {
                 "columns": [
-                    {"name": "ID", "width": 40, "location": "center"},
+                    {"name": "ID", "width": 35, "location": "center"},
                     {"name": "Data", "width": 80, "location": "center"},
                     {"name": "Cliente", "width": "auto", "location": "w"},
-                    {"name": "Total", "width": 80, "location": "w"}
+                    {"name": "Total", "width": 100, "location": "w"}
                 ]
             }
         }
@@ -131,13 +137,21 @@ class MenuSideBar(ctk.CTkFrame):
 
     def __products_button_action(self, data: list[Produto]):
         data.reverse()
+
+        dto = []
+        for p in data:
+            texto = f"{p.valor:,.2f}"
+            texto = texto.replace(",", "X").replace(".", ",").replace("X", ".")
+            valor = f"R$ {(10 - len(texto)) * " "}{texto}"
+            dto.append((p.id_pro, p.nome, valor))
+
         content = {
-            "data": [(p.id_pro, p.nome, f"R$  {(9 - len(f"{p.valor:.2f}")) * "  "}{p.valor:.2f}") for p in data],
+            "data": dto,
             "meta": {
                 "columns": [
-                    {"name": "ID", "width": 40, "location": "center"},
+                    {"name": "ID", "width": 35, "location": "center"},
                     {"name": "Nome", "width": "auto", "location": "w"},
-                    {"name": "Valor", "width": 80, "location": "w"}
+                    {"name": "Valor", "width": 100, "location": "w"}
                 ]
             }
         }
@@ -154,7 +168,7 @@ class MenuSideBar(ctk.CTkFrame):
             "data": [(c.id_cli, c.nome) for c in data],
             "meta": {
                 "columns": [
-                    {"name": "ID", "width": 40, "location": "center"},
+                    {"name": "ID", "width": 35, "location": "center"},
                     {"name": "Nome", "width": "auto", "location": "w"},
                 ]
             }

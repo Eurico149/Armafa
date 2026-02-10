@@ -1,5 +1,6 @@
 from tkinter import ttk
 import customtkinter as ctk
+from reportlab.lib.PyFontify import fontify
 
 
 # https://github.com/TomSchimansky/CustomTkinter/discussions/431
@@ -18,6 +19,7 @@ class ContentFrame(ctk.CTkFrame):
     def change_content(self, data: dict[str, list[tuple[str]] | dict[str, list[dict[str, str]]]]):
         if self._search_bar is not None:
             self._search_bar.destroy()
+            self._search_bar = None
 
         self._search_bar = ctk.CTkEntry(self,
                                         fg_color="#EFEFEF",
@@ -63,12 +65,15 @@ class ContentFrame(ctk.CTkFrame):
                         rowheight=26,
                         fieldbackground="#343638",
                         bordercolor="#343638",
-                        borderwidth=0)
+                        borderwidth=0,
+                        font=("Cascadia Mono", 9)
+                        )
         style.map('Treeview', background=[('selected', '#22559b')])
         style.configure("Treeview.Heading",
-                        background="#565b5e",
+                        background="#464a4d",
                         foreground="white",
-                        relief="flat")
+                        relief="flat",
+                        font=("Cascadia Mono", 12, "bold"))
         style.map("Treeview.Heading",
                   background=[('active', '#3484F0')])
 
