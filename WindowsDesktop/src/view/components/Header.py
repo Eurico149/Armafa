@@ -1,9 +1,9 @@
 import customtkinter as ctk
 from PIL import Image
-
 from src import SystemRoot
 from src.model import Produto, Cliente, Pedido
 from src.view.components.Button import Button
+from src.view.utils import convert_to_table_content
 
 
 class Header(ctk.CTkFrame):
@@ -107,26 +107,7 @@ class MenuSideBar(ctk.CTkFrame):
         self.buttons[clients_button.cget("text")] = clients_button
 
     def __orders_button_action(self, data: list[Pedido]):
-        data.reverse()
-
-        dto = []
-        for p in data:
-            texto = f"{p.valor_total:,.2f}"
-            texto = texto.replace(",", "X").replace(".", ",").replace("X", ".")
-            valor_total = f"R$ {(10 - len(texto)) * " "}{texto}"
-            dto.append((p.id_ped, p.data, p.cliente.nome, valor_total))
-
-        content = {
-            "data": dto,
-            "meta": {
-                "columns": [
-                    {"name": "ID", "width": 35, "location": "center"},
-                    {"name": "Data", "width": 80, "location": "center"},
-                    {"name": "Cliente", "width": "auto", "location": "w"},
-                    {"name": "Total", "width": 100, "location": "w"}
-                ]
-            }
-        }
+        content = convert_to_table_content(data_type="Pedidos", data=data)
 
         self.master.content.change_content(content)
         for button in self.buttons.values():
@@ -136,25 +117,7 @@ class MenuSideBar(ctk.CTkFrame):
 
 
     def __products_button_action(self, data: list[Produto]):
-        data.reverse()
-
-        dto = []
-        for p in data:
-            texto = f"{p.valor:,.2f}"
-            texto = texto.replace(",", "X").replace(".", ",").replace("X", ".")
-            valor = f"R$ {(10 - len(texto)) * " "}{texto}"
-            dto.append((p.id_pro, p.nome, valor))
-
-        content = {
-            "data": dto,
-            "meta": {
-                "columns": [
-                    {"name": "ID", "width": 35, "location": "center"},
-                    {"name": "Nome", "width": "auto", "location": "w"},
-                    {"name": "Valor", "width": 100, "location": "w"}
-                ]
-            }
-        }
+        content = convert_to_table_content(data_type="Produtos", data=data)
 
         self.master.content.change_content(content)
         for button in self.buttons.values():
@@ -163,16 +126,7 @@ class MenuSideBar(ctk.CTkFrame):
                     button.press()
 
     def __clients_button_action(self, data: list[Cliente]):
-        data.reverse()
-        content = {
-            "data": [(c.id_cli, c.nome) for c in data],
-            "meta": {
-                "columns": [
-                    {"name": "ID", "width": 35, "location": "center"},
-                    {"name": "Nome", "width": "auto", "location": "w"},
-                ]
-            }
-        }
+        content = convert_to_table_content(data_type="Clientes", data=data)
 
         self.master.content.change_content(content)
         for button in self.buttons.values():

@@ -18,7 +18,7 @@ class Home(ctk.CTk):
         self._add_widgets()
 
     def _add_widgets(self):
-        self.content = ContentFrame(self, fg_color="transparent", corner_radius=0)
+        self.content = ContentFrame(self, self.__system_root, fg_color="transparent", corner_radius=0)
         self.content.grid(column=1, row=1, sticky="nsew")
 
         self._header = Header(self, self.__system_root, fg_color="#272727", corner_radius=0)
