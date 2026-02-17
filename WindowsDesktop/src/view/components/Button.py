@@ -2,7 +2,6 @@ import customtkinter as ctk
 
 
 class Button(ctk.CTkButton):
-
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.__hover_color = kwargs.get("hover_color")

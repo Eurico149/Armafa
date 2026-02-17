@@ -1,19 +1,25 @@
-from sqlalchemy import select, insert, delete, update
+from sqlalchemy import delete, insert, select, update
+
+from src.entity import (
+    get_pedido_quantidade_produto_entity,
+    get_pedidos_entity,
+    get_produtos_pedidos_entity,
+)
+from src.exception import ArmafaExeption
 from src.model import Pedido, Produto
 from src.repository import ClienteRepository
 from src.repository.DBConfig import DBConfig
-from src.entity import get_pedidos_entity, get_produtos_pedidos_entity, get_pedido_quantidade_produto_entity
-from src.exception import ArmafaExeption
 
 
 class PedidoRepository:
-
     def __init__(self, dbconfig: DBConfig, cliente_repo: ClienteRepository):
         self.__cliente_repo = cliente_repo
         self.__engine = dbconfig.engine
         self.__pedidos_table = get_pedidos_entity(dbconfig.metadata)
         self.__produtos_pedidos_table = get_produtos_pedidos_entity(dbconfig.metadata)
-        self.__pedidos_quantidade_produto_table = get_pedido_quantidade_produto_entity(dbconfig.metadata, dbconfig.engine)
+        self.__pedidos_quantidade_produto_table = get_pedido_quantidade_produto_entity(
+            dbconfig.metadata, dbconfig.engine
+        )
         self.__pedidos = self.__get_pedidos()
 
     def __get_pedidos(self):
@@ -23,7 +29,13 @@ class PedidoRepository:
 
         pedidos = {}
         for p in res:
-            pedidos[p.id_ped] = Pedido(p.id_ped, self.__cliente_repo.get_cliente(p.id_cli), p.data, self.__get_pedido_produtos(p.id_ped), p.desconto)
+            pedidos[p.id_ped] = Pedido(
+                p.id_ped,
+                self.__cliente_repo.get_cliente(p.id_cli),
+                p.data,
+                self.__get_pedido_produtos(p.id_ped),
+                p.desconto,
+            )
         return pedidos
 
     def add_pedido(self, p: Pedido):
@@ -32,7 +44,7 @@ class PedidoRepository:
                 "id_ped": p.id_ped,
                 "id_cli": p.cliente.id_cli,
                 "data": p.data,
-                "desconto": p.desconto
+                "desconto": p.desconto,
             }
             stmt = insert(self.__pedidos_table).values(dados)
             conn.execute(stmt)
@@ -46,12 +58,8 @@ class PedidoRepository:
     def del_pedido(self, id_ped):
         if id_ped in self.__pedidos:
             with self.__engine.connect() as conn:
-                stmt1 = delete(self.__pedidos_table).where(
-                    self.__pedidos_table.c.id_ped == id_ped
-                )
-                stmt2 = delete(self.__produtos_pedidos_table).where(
-                    self.__produtos_pedidos_table.c.id_ped == id_ped
-                )
+                stmt1 = delete(self.__pedidos_table).where(self.__pedidos_table.c.id_ped == id_ped)
+                stmt2 = delete(self.__produtos_pedidos_table).where(self.__produtos_pedidos_table.c.id_ped == id_ped)
                 conn.execute(stmt1)
                 conn.execute(stmt2)
                 conn.commit()
@@ -79,21 +87,17 @@ class PedidoRepository:
                 "id_ped": p.id_ped,
                 "id_pro": p.produtos[i][1].id_pro,
                 "valor_individual": p.produtos[i][1].valor,
-                "quantidade": p.produtos[i][0]
+                "quantidade": p.produtos[i][0],
             }
             data.append(aux)
 
         with self.__engine.connect() as conn:
-            stmt1 = update(self.__pedidos_table).where(
-                self.__pedidos_table.c.id_ped == p.id_ped
-            ).values(
-                id_cli=p.cliente.id_cli,
-                data=p.data,
-                desconto=p.desconto
+            stmt1 = (
+                update(self.__pedidos_table)
+                .where(self.__pedidos_table.c.id_ped == p.id_ped)
+                .values(id_cli=p.cliente.id_cli, data=p.data, desconto=p.desconto)
             )
-            stmt2 = delete(self.__produtos_pedidos_table).where(
-                self.__produtos_pedidos_table.c.id_ped == p.id_ped
-            )
+            stmt2 = delete(self.__produtos_pedidos_table).where(self.__produtos_pedidos_table.c.id_ped == p.id_ped)
             stmt3 = insert(self.__produtos_pedidos_table).values(data)
 
             conn.execute(stmt1)
@@ -117,7 +121,7 @@ class PedidoRepository:
                     "id_ped": id_ped,
                     "id_pro": produto[1].id_pro,
                     "valor_individual": produto[1].valor,
-                    "quantidade": produto[0]
+                    "quantidade": produto[0],
                 }
                 stmt = insert(self.__produtos_pedidos_table).values(data)
 
@@ -136,10 +140,8 @@ class PedidoRepository:
                 self.__pedidos_quantidade_produto_table.c.quantidade,
                 self.__pedidos_quantidade_produto_table.c.id_pro,
                 self.__pedidos_quantidade_produto_table.c.nome,
-                self.__pedidos_quantidade_produto_table.c.valor_individual
-            ).where(
-                self.__pedidos_quantidade_produto_table.c.id_ped == id_ped
-            )
+                self.__pedidos_quantidade_produto_table.c.valor_individual,
+            ).where(self.__pedidos_quantidade_produto_table.c.id_ped == id_ped)
             res = conn.execute(stmt)
         return [(p.quantidade, Produto(p.id_pro, p.nome, p.valor_individual)) for p in res]
 
@@ -155,4 +157,3 @@ class PedidoRepository:
         if len(self.__pedidos) == 0:
             return 0
         return max(self.__pedidos.keys())
-

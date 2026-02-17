@@ -1,9 +1,8 @@
 from src.controller import Cliente_controller, Pedidos_controller, Produto_controller
-from src.repository import DBConfig, ProdutoRepository, PedidoRepository, ClienteRepository
+from src.repository import ClienteRepository, DBConfig, PedidoRepository, ProdutoRepository
 
 
 class SystemRoot:
-
     def __init__(self):
         config = DBConfig()
         cliente_repo = ClienteRepository(config)

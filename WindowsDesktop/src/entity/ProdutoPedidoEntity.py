@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, Integer, Float, MetaData, CheckConstraint, ForeignKey
+from sqlalchemy import CheckConstraint, Column, Float, ForeignKey, Integer, MetaData, Table
 
 
 def get_produtos_pedidos_entity(metadata: MetaData) -> Table:

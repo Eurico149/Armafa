@@ -3,8 +3,19 @@ from dataclasses import dataclass
 
 @dataclass
 class Cliente:
-
-    def __init__(self, id_cli: int, nome: str, cep: str, endereco: str, uf: str, cidade: str, bairro: str, cpf_cnpj: str, fone: str, email: str):
+    def __init__(
+        self,
+        id_cli: int,
+        nome: str,
+        cep: str,
+        endereco: str,
+        uf: str,
+        cidade: str,
+        bairro: str,
+        cpf_cnpj: str,
+        fone: str,
+        email: str,
+    ):
         self.id_cli = id_cli
         self.nome = nome
         self.cep = cep

@@ -4,7 +4,6 @@ from src.repository import ClienteRepository, PedidoRepository
 
 
 class Cliente_controller:
-
     def __init__(self, cliente_repo: ClienteRepository, pedido_repo: PedidoRepository):
         self.__cliente_repo = cliente_repo
         self.__pedido_repo = pedido_repo
@@ -14,7 +13,19 @@ class Cliente_controller:
         saida = saida.replace("(", "").replace(")", "")
         return saida
 
-    def add_cliente(self, id_cli: int, nome: str, cep: str, endereco: str, uf: str, cidade: str, bairro: str, cpf_cnpj: str, fone: str, email: str) -> None:
+    def add_cliente(
+        self,
+        id_cli: int,
+        nome: str,
+        cep: str,
+        endereco: str,
+        uf: str,
+        cidade: str,
+        bairro: str,
+        cpf_cnpj: str,
+        fone: str,
+        email: str,
+    ) -> None:
         cep = self.__strip(cep)
         cpf_cnpj = self.__strip(cpf_cnpj)
         fone = self.__strip(fone)
@@ -41,18 +52,30 @@ class Cliente_controller:
         cliente = Cliente(int(id_cli), nome, cep, endereco, uf, cidade, bairro, cpf_cnpj, fone, email)
         try:
             self.__cliente_repo.add_cliente(cliente)
-        except:
-            raise ArmafaExeption("Erro Ao Cadastrar Cliente!")
+        except Exception as err:
+            raise ArmafaExeption("Erro Ao Cadastrar Cliente!") from err
 
     def del_cliente(self, id_cli: int) -> None:
         if self.__pedido_repo.cliente_in_pedidos(id_cli):
             raise ArmafaExeption("Impossive Apagar Cliente, O Mesmo Ja Esta Vincaulado a um Pedido!")
         try:
             self.__cliente_repo.del_cliente(id_cli)
-        except:
-            raise ArmafaExeption("Erro Ao Deletar Cliente!")
+        except Exception as err:
+            raise ArmafaExeption("Erro Ao Deletar Cliente!") from err
 
-    def change_cliente(self,id_cli: str, nome: str, cep: str, endereco: str, uf: str, cidade: str, bairro: str, cpf_cnpj: str, fone: str, email: str) -> None :
+    def change_cliente(
+        self,
+        id_cli: str,
+        nome: str,
+        cep: str,
+        endereco: str,
+        uf: str,
+        cidade: str,
+        bairro: str,
+        cpf_cnpj: str,
+        fone: str,
+        email: str,
+    ) -> None:
         cep = self.__strip(cep)
         cpf_cnpj = self.__strip(cpf_cnpj)
         fone = self.__strip(fone)
@@ -79,8 +102,8 @@ class Cliente_controller:
         cliente = Cliente(int(id_cli), nome, cep, endereco, uf, cidade, bairro, cpf_cnpj, fone, email)
         try:
             self.__cliente_repo.change_cliente(cliente)
-        except:
-            raise ArmafaExeption("Erro Ao Cadastrar Cliente!")
+        except Exception as err:
+            raise ArmafaExeption("Erro Ao Cadastrar Cliente!") from err
 
     def get_clientes(self, ref: str) -> list[Cliente]:
         if ref.isdigit():

@@ -1,10 +1,10 @@
 import customtkinter as ctk
+
 from src import SystemRoot
-from src.view.components import Header, ContentFrame
+from src.view.components import ContentFrame, Header
 
 
 class Home(ctk.CTk):
-
     def __init__(self, system_root: SystemRoot):
         super().__init__(fg_color="#555555")
         self.geometry("1280x720")

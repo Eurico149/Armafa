@@ -1,14 +1,14 @@
 import os
+from os import path, startfile
+
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
-from os import startfile, path
-from src.model import Cliente
-from src.model import Pedido
+
+from src.model import Cliente, Pedido
 
 
 class PDF_creator:
-
     def __init__(self, nome_arquivo: str, cliente: Cliente, pedido: Pedido):
         self._cliente = cliente
         self._pedido = pedido
@@ -18,7 +18,7 @@ class PDF_creator:
         self.__make_pdf()
 
     def _valida_nome(self, nome_base):
-        output_dir = './pdfs'
+        output_dir = "./pdfs"
         os.makedirs(output_dir, exist_ok=True)
         nome_base = os.path.join(output_dir, nome_base)
         nome, extensao = path.splitext(nome_base)
@@ -40,23 +40,27 @@ class PDF_creator:
 
         h = 15
         col_l = [40, 250, 60, 100, 104]
-        for j in range(len(self._pedido.produtos)+1):
+        for j in range(len(self._pedido.produtos) + 1):
             if j == 37:
                 self._cont += 1
                 self.__more_pages()
                 break
             for i in range(len(col_l)):
                 if j == 0:
-                    p = ['Código', 'Produto', 'Quantidade', 'Preço Unitário', 'Valor Total']
+                    p = ["Código", "Produto", "Quantidade", "Preço Unitário", "Valor Total"]
                 else:
-                    id_pro = "0" * (4 - len(str(self._pedido.produtos[j-1][1].id_pro))) + str(self._pedido.produtos[j-1][1].id_pro)
-                    nome = self._pedido.produtos[j-1][1].nome
-                    quantidade = str(self._pedido.produtos[j-1][0])
-                    aux_u = f"{self._pedido.produtos[j-1][1].valor:.2f}".replace(".", ",")
+                    id_pro = "0" * (4 - len(str(self._pedido.produtos[j - 1][1].id_pro))) + str(
+                        self._pedido.produtos[j - 1][1].id_pro
+                    )
+                    nome = self._pedido.produtos[j - 1][1].nome
+                    quantidade = str(self._pedido.produtos[j - 1][0])
+                    aux_u = f"{self._pedido.produtos[j - 1][1].valor:.2f}".replace(".", ",")
                     if len(aux_u) > 6:
                         aux_u = aux_u[0:-6] + "." + aux_u[-6:]
                     valor_unidade = f"R$ {aux_u}"
-                    aux_t = f"{(self._pedido.produtos[j-1][0] * self._pedido.produtos[j-1][1].valor):.2f}".replace(".", ",")
+                    aux_t = f"{(self._pedido.produtos[j - 1][0] * self._pedido.produtos[j - 1][1].valor):.2f}".replace(
+                        ".", ","
+                    )
                     if len(aux_t) > 6:
                         aux_t = aux_t[0:-6] + "." + aux_t[-6:]
                     valor_total = f"R$ {aux_t}"
@@ -70,9 +74,16 @@ class PDF_creator:
                     if i == 4:
                         aux = (0, 5, 0, 0)
                     self._cv.setFillColor(colors.HexColor("#DCDCDC"))
-                    self._cv.roundRect(20 + sum(col_l[:i + 1]) - col_l[i], altura - 181 - j * h, col_l[i], h, aux, fill=1)
+                    self._cv.roundRect(
+                        20 + sum(col_l[: i + 1]) - col_l[i],
+                        altura - 181 - j * h,
+                        col_l[i],
+                        h,
+                        aux,
+                        fill=1,
+                    )
                     self._cv.setFillColor(colors.HexColor("#000000"))
-                    self._cv.drawString(22 + sum(col_l[:i + 1]) - col_l[i], altura - 177 - j * h, p[i])
+                    self._cv.drawString(22 + sum(col_l[: i + 1]) - col_l[i], altura - 177 - j * h, p[i])
                     self._cv.setFont("Helvetica", 10)
                 elif j == len(self._pedido.produtos) or j == 36:
                     if i == 0:
@@ -80,15 +91,15 @@ class PDF_creator:
                         aux = (0, 0, 5, 0)
                     elif i == 4:
                         aux = (0, 0, 0, 5)
-                    self._cv.roundRect(20 + sum(col_l[:i + 1]) - col_l[i], altura - 181 - j * h, col_l[i], h, aux)
-                    self._cv.drawString(22 + sum(col_l[:i + 1]) - col_l[i], altura - 177 - j * h, p[i])
+                    self._cv.roundRect(20 + sum(col_l[: i + 1]) - col_l[i], altura - 181 - j * h, col_l[i], h, aux)
+                    self._cv.drawString(22 + sum(col_l[: i + 1]) - col_l[i], altura - 177 - j * h, p[i])
                 else:
                     aux = (0, 0, 0, 0)
-                    self._cv.roundRect(20 + sum(col_l[:i + 1]) - col_l[i], altura - 181 - j * h, col_l[i], h, aux)
-                    self._cv.drawString(22 + sum(col_l[:i + 1]) - col_l[i], altura - 177 - j * h, p[i])
+                    self._cv.roundRect(20 + sum(col_l[: i + 1]) - col_l[i], altura - 181 - j * h, col_l[i], h, aux)
+                    self._cv.drawString(22 + sum(col_l[: i + 1]) - col_l[i], altura - 177 - j * h, p[i])
             if j == len(self._pedido.produtos) or j == 36:
                 self._cv.roundRect(470, altura - 199 - j * h, col_l[4], h, (5, 5, 0, 0))
-                self._cv.roundRect(470, altura - 199 - (j+1) * h, col_l[4], h, (0, 0, 5, 5))
+                self._cv.roundRect(470, altura - 199 - (j + 1) * h, col_l[4], h, (0, 0, 5, 5))
                 st = f"{self._pedido.valor_total:.2f}".replace(".", ",")
                 if len(st) > 6:
                     st = st[0:-6] + "." + st[-6:]
@@ -97,12 +108,12 @@ class PDF_creator:
                 vt = f"{self._pedido.valor_total * ((100 - self._pedido.desconto) / 100):.2f}".replace(".", ",")
                 if len(vt) > 6:
                     vt = vt[0:-6] + "." + vt[-6:]
-                self._cv.drawString(472, altura - 195 - (j+1) * h, f"R$ {vt}")
-                self._cv.drawString(443, altura - 195 - (j+1) * h, "Total:")
+                self._cv.drawString(472, altura - 195 - (j + 1) * h, f"R$ {vt}")
+                self._cv.drawString(443, altura - 195 - (j + 1) * h, "Total:")
 
-                self._cv.roundRect(470, altura - 199 - (j+2.5) * h, 30, h, (5, 5, 5, 5))
-                self._cv.drawString(472, altura - 195 - (j+2.5) * h, f"{self._pedido.desconto}%")
-                self._cv.drawString(439, altura - 195 - (j+2.5) * h, "Desc.:")
+                self._cv.roundRect(470, altura - 199 - (j + 2.5) * h, 30, h, (5, 5, 5, 5))
+                self._cv.drawString(472, altura - 195 - (j + 2.5) * h, f"{self._pedido.desconto}%")
+                self._cv.drawString(439, altura - 195 - (j + 2.5) * h, "Desc.:")
 
                 self._cv.roundRect(20, altura - 245 - j * h, 300, 60, (5, 5, 5, 5))
                 self._cv.drawString(22, altura - 195 - j * h, "Observações:")
@@ -118,22 +129,24 @@ class PDF_creator:
 
         h = 15
         col_l = [40, 250, 60, 100, 104]
-        for j in range(37, len(self._pedido.produtos)+1):
+        for j in range(37, len(self._pedido.produtos) + 1):
             if j != 37 and (j - 37) % 52 == 0:
                 self._cont += 1
                 self._cv.showPage()
                 self._cv.setFont("Helvetica", 10)
             for i in range(len(col_l)):
                 id_pro = "0" * (4 - len(str(self._pedido.produtos[j - 1][1].id_pro))) + str(
-                    self._pedido.produtos[j - 1][1].id_pro)
+                    self._pedido.produtos[j - 1][1].id_pro
+                )
                 nome = self._pedido.produtos[j - 1][1].nome
                 quantidade = str(self._pedido.produtos[j - 1][0])
                 aux_u = f"{self._pedido.produtos[j - 1][1].valor:.2f}".replace(".", ",")
                 if len(aux_u) > 6:
                     aux_u = aux_u[0:-6] + "." + aux_u[-6:]
                 valor_unidade = f"R$ {aux_u}"
-                aux_t = f"{(self._pedido.produtos[j - 1][0] * self._pedido.produtos[j - 1][1].valor):.2f}".replace(".",
-                                                                                                                   ",")
+                aux_t = f"{(self._pedido.produtos[j - 1][0] * self._pedido.produtos[j - 1][1].valor):.2f}".replace(
+                    ".", ","
+                )
                 if len(aux_t) > 6:
                     aux_t = aux_t[0:-6] + "." + aux_t[-6:]
                 valor_total = f"R$ {aux_t}"
@@ -146,23 +159,38 @@ class PDF_creator:
                         aux = (0, 0, 5, 0)
                     elif i == 4:
                         aux = (0, 0, 0, 5)
-                    self._cv.roundRect(20 + sum(col_l[:i + 1]) - col_l[i], altura - 44 - ((j - 37) % 52) * h, col_l[i],
-                                       h, aux)
-                    self._cv.drawString(22 + sum(col_l[:i + 1]) - col_l[i], altura - 40 - ((j - 37) % 52) * h, p[i])
+                    self._cv.roundRect(
+                        20 + sum(col_l[: i + 1]) - col_l[i],
+                        altura - 44 - ((j - 37) % 52) * h,
+                        col_l[i],
+                        h,
+                        aux,
+                    )
+                    self._cv.drawString(22 + sum(col_l[: i + 1]) - col_l[i], altura - 40 - ((j - 37) % 52) * h, p[i])
                 elif (j - 37) % 52 == 0:
                     if i == 0:
                         aux = (5, 0, 0, 0)
                     if i == 4:
                         aux = (0, 5, 0, 0)
-                    self._cv.roundRect(20 + sum(col_l[:i + 1]) - col_l[i], altura - 44 - ((j - 37) % 52) * h, col_l[i],
-                                       h, aux)
-                    self._cv.drawString(22 + sum(col_l[:i + 1]) - col_l[i], altura - 40 - ((j - 37) % 52) * h, p[i])
+                    self._cv.roundRect(
+                        20 + sum(col_l[: i + 1]) - col_l[i],
+                        altura - 44 - ((j - 37) % 52) * h,
+                        col_l[i],
+                        h,
+                        aux,
+                    )
+                    self._cv.drawString(22 + sum(col_l[: i + 1]) - col_l[i], altura - 40 - ((j - 37) % 52) * h, p[i])
 
                 else:
                     aux = (0, 0, 0, 0)
-                    self._cv.roundRect(20 + sum(col_l[:i + 1]) - col_l[i], altura - 44 - ((j - 37) % 52) * h, col_l[i],
-                                       h, aux)
-                    self._cv.drawString(22 + sum(col_l[:i + 1]) - col_l[i], altura - 40 - ((j - 37) % 52) * h, p[i])
+                    self._cv.roundRect(
+                        20 + sum(col_l[: i + 1]) - col_l[i],
+                        altura - 44 - ((j - 37) % 52) * h,
+                        col_l[i],
+                        h,
+                        aux,
+                    )
+                    self._cv.drawString(22 + sum(col_l[: i + 1]) - col_l[i], altura - 40 - ((j - 37) % 52) * h, p[i])
 
     # limeites largura: 20, 574
     def _cabecalho(self):
@@ -219,7 +247,6 @@ class PDF_creator:
         self._cv.drawString(23, altura - 120, text)
         self._cv.drawString(67, altura - 121, 5 * "_")
 
-
         self._cv.drawString(100, altura - 120, "Cliente: " + self._cliente.nome)
         self._cv.drawString(131, altura - 121, 50 * "_")
 
@@ -274,8 +301,8 @@ class PDF_creator:
         self._cv.save()
         startfile(self._nome)
 
-class Pdf_espelho(PDF_creator):
 
+class Pdf_espelho(PDF_creator):
     def __init__(self, nome: str, cliente: Cliente, pedido: Pedido):
         super().__init__(nome, cliente, pedido)
 
@@ -286,16 +313,17 @@ class Pdf_espelho(PDF_creator):
         h = 20
         col_l = [60, 400, 94]
         for j in range(len(self._pedido.produtos) + 1):
-            if j != 0 and j == 32 :
+            if j != 0 and j == 32:
                 self._cont += 1
                 self.__more_pages()
                 break
             for i in range(len(col_l)):
                 if j == 0:
-                    p = ['Código', 'Produto', 'Quantidade']
+                    p = ["Código", "Produto", "Quantidade"]
                 else:
                     id_pro = "0" * (4 - len(str(self._pedido.produtos[j - 1][1].id_pro))) + str(
-                        self._pedido.produtos[j - 1][1].id_pro)
+                        self._pedido.produtos[j - 1][1].id_pro
+                    )
                     nome = self._pedido.produtos[j - 1][1].nome
                     quantidade = str(self._pedido.produtos[j - 1][0])
                     p = [id_pro, nome, quantidade]
@@ -308,10 +336,16 @@ class Pdf_espelho(PDF_creator):
                     if i == 2:
                         aux = (0, 5, 0, 0)
                     self._cv.setFillColor(colors.HexColor("#DCDCDC"))
-                    self._cv.roundRect(20 + sum(col_l[:i + 1]) - col_l[i], (altura - 186 - j * h), col_l[i], h, aux,
-                                       fill=1)
+                    self._cv.roundRect(
+                        20 + sum(col_l[: i + 1]) - col_l[i],
+                        (altura - 186 - j * h),
+                        col_l[i],
+                        h,
+                        aux,
+                        fill=1,
+                    )
                     self._cv.setFillColor(colors.HexColor("#000000"))
-                    self._cv.drawString(22 + sum(col_l[:i + 1]) - col_l[i], altura - 182 - j * h, p[i])
+                    self._cv.drawString(22 + sum(col_l[: i + 1]) - col_l[i], altura - 182 - j * h, p[i])
                     self._cv.setFont("Helvetica", 14)
                 elif j == len(self._pedido.produtos) or j == 31:
                     if i == 0:
@@ -321,12 +355,12 @@ class Pdf_espelho(PDF_creator):
                         aux = (0, 0, 5, 0)
                     elif i == 2:
                         aux = (0, 0, 0, 5)
-                    self._cv.roundRect(20 + sum(col_l[:i + 1]) - col_l[i], altura - 186 - j * h, col_l[i], h, aux)
-                    self._cv.drawString(22 + sum(col_l[:i + 1]) - col_l[i], altura - 182 - j * h, p[i])
+                    self._cv.roundRect(20 + sum(col_l[: i + 1]) - col_l[i], altura - 186 - j * h, col_l[i], h, aux)
+                    self._cv.drawString(22 + sum(col_l[: i + 1]) - col_l[i], altura - 182 - j * h, p[i])
                 else:
                     aux = (0, 0, 0, 0)
-                    self._cv.roundRect(20 + sum(col_l[:i + 1]) - col_l[i], altura - 186 - j * h, col_l[i], h, aux)
-                    self._cv.drawString(22 + sum(col_l[:i + 1]) - col_l[i], altura - 182 - j * h, p[i])
+                    self._cv.roundRect(20 + sum(col_l[: i + 1]) - col_l[i], altura - 186 - j * h, col_l[i], h, aux)
+                    self._cv.drawString(22 + sum(col_l[: i + 1]) - col_l[i], altura - 182 - j * h, p[i])
 
     def __more_pages(self):
         self._cv.showPage()
@@ -336,18 +370,19 @@ class Pdf_espelho(PDF_creator):
         h = 20
         col_l = [60, 400, 94]
         for j in range(32, len(self._pedido.produtos) + 1):
-            if j != 32 and (j-32) % 39 == 0:
+            if j != 32 and (j - 32) % 39 == 0:
                 self._cont += 1
                 self._cv.showPage()
             for i in range(len(col_l)):
                 id_pro = "0" * (4 - len(str(self._pedido.produtos[j - 1][1].id_pro))) + str(
-                    self._pedido.produtos[j - 1][1].id_pro)
+                    self._pedido.produtos[j - 1][1].id_pro
+                )
                 nome = self._pedido.produtos[j - 1][1].nome
                 quantidade = str(self._pedido.produtos[j - 1][0])
                 p = [id_pro, nome, quantidade]
 
                 aux = (0, 0, 0, 0)
-                if j == len(self._pedido.produtos) or (j-32) % 39 == 38:
+                if j == len(self._pedido.produtos) or (j - 32) % 39 == 38:
                     if i == 0:
                         self._cv.setFont("Helvetica", 10)
                         self._cv.drawString(580, 10, str(self._cont))
@@ -355,18 +390,36 @@ class Pdf_espelho(PDF_creator):
                         aux = (0, 0, 5, 0)
                     elif i == 2:
                         aux = (0, 0, 0, 5)
-                    self._cv.roundRect(20 + sum(col_l[:i + 1]) - col_l[i], altura - 44 - ((j-32) % 39) * h, col_l[i], h, aux)
-                    self._cv.drawString(22 + sum(col_l[:i + 1]) - col_l[i], altura - 40 - ((j-32) % 39) * h, p[i])
-                elif (j-32) % 39 == 0:
+                    self._cv.roundRect(
+                        20 + sum(col_l[: i + 1]) - col_l[i],
+                        altura - 44 - ((j - 32) % 39) * h,
+                        col_l[i],
+                        h,
+                        aux,
+                    )
+                    self._cv.drawString(22 + sum(col_l[: i + 1]) - col_l[i], altura - 40 - ((j - 32) % 39) * h, p[i])
+                elif (j - 32) % 39 == 0:
                     self._cv.setFont("Helvetica", 14)
                     if i == 0:
                         aux = (5, 0, 0, 0)
                     if i == 2:
                         aux = (0, 5, 0, 0)
-                    self._cv.roundRect(20 + sum(col_l[:i + 1]) - col_l[i], altura - 44 - ((j-32) % 39) * h, col_l[i], h, aux)
-                    self._cv.drawString(22 + sum(col_l[:i + 1]) - col_l[i],altura - 40 - ((j-32) % 39) * h, p[i])
+                    self._cv.roundRect(
+                        20 + sum(col_l[: i + 1]) - col_l[i],
+                        altura - 44 - ((j - 32) % 39) * h,
+                        col_l[i],
+                        h,
+                        aux,
+                    )
+                    self._cv.drawString(22 + sum(col_l[: i + 1]) - col_l[i], altura - 40 - ((j - 32) % 39) * h, p[i])
 
                 else:
                     aux = (0, 0, 0, 0)
-                    self._cv.roundRect(20 + sum(col_l[:i + 1]) - col_l[i], altura - 44 - ((j-32) % 39) * h, col_l[i], h, aux)
-                    self._cv.drawString(22 + sum(col_l[:i + 1]) - col_l[i], altura - 40 - ((j-32) % 39) * h, p[i])
+                    self._cv.roundRect(
+                        20 + sum(col_l[: i + 1]) - col_l[i],
+                        altura - 44 - ((j - 32) % 39) * h,
+                        col_l[i],
+                        h,
+                        aux,
+                    )
+                    self._cv.drawString(22 + sum(col_l[: i + 1]) - col_l[i], altura - 40 - ((j - 32) % 39) * h, p[i])

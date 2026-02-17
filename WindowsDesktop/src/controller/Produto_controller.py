@@ -4,7 +4,6 @@ from src.repository import PedidoRepository, ProdutoRepository
 
 
 class Produto_controller:
-
     def __init__(self, produto_repo: ProdutoRepository, pedido_repo: PedidoRepository):
         self.__pedido_repo = pedido_repo
         self.__produto_repo = produto_repo
@@ -34,16 +33,16 @@ class Produto_controller:
             raise ArmafaExeption("Valor Invalido!")
         try:
             self.__produto_repo.add_produto(Produto(int(id_pro), nome, float(valor)))
-        except:
-            raise ArmafaExeption("Erro Ao Cadastrar Produto!")
+        except Exception as err:
+            raise ArmafaExeption("Erro Ao Cadastrar Produto!") from err
 
     def del_produto(self, id_pro) -> None:
         if self.__pedido_repo.produto_in_pedidos(id_pro):
             raise ArmafaExeption("Impossivel Deletar Produto, o Proprio Ja Esta Cadastrado em um Pedido!")
         try:
             self.__produto_repo.del_produto(id_pro)
-        except:
-            raise ArmafaExeption("Erro Ao Deletar Produto!")
+        except Exception as err:
+            raise ArmafaExeption("Erro Ao Deletar Produto!") from err
 
     def mudar_produto(self, id_pro, nome, valor) -> None:
         if "," in valor:
@@ -53,11 +52,11 @@ class Produto_controller:
         if nome == "":
             raise ArmafaExeption("O Nome do Produto Não Foi Preenchido!")
         if len(nome) > 36:
-            raise("O Nome do Produto Não deve Utrapassar 36 Caracteres!")
+            raise ArmafaExeption("O Nome do Produto Não deve Utrapassar 36 Caracteres!")
         try:
             self.__produto_repo.change_produto(int(id_pro), nome, float(valor))
-        except:
-            raise ArmafaExeption("Erro ao Mudar Pedido!")
+        except Exception as err:
+            raise ArmafaExeption("Erro ao Mudar Pedido!") from err
 
     def get_max_id(self) -> int:
         saida = self.__produto_repo.get_max_id() + 1

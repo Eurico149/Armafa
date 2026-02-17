@@ -1,17 +1,19 @@
-from sqlalchemy import select, insert, update, delete
+from sqlalchemy import delete, insert, select, update
+
+from src.entity import get_pedido_quantidade_produto_entity, get_produtos_entity
 from src.model import Produto
 from src.repository import PedidoRepository
 from src.repository.DBConfig import DBConfig
-from src.entity import get_produtos_entity, get_pedido_quantidade_produto_entity
 
 
 class ProdutoRepository:
-
     def __init__(self, dbconfig: DBConfig, pedido_repo: PedidoRepository):
         self.__pedido_repo = pedido_repo
         self.__engine = dbconfig.engine
         self.__produtos_table = get_produtos_entity(dbconfig.metadata)
-        self.__pedido_quantidade_produto_table = get_pedido_quantidade_produto_entity(dbconfig.metadata, dbconfig.engine)
+        self.__pedido_quantidade_produto_table = get_pedido_quantidade_produto_entity(
+            dbconfig.metadata, dbconfig.engine
+        )
         self.__produtos = self.__get_produtos()
 
     def __get_produtos(self):
@@ -31,13 +33,9 @@ class ProdutoRepository:
     def get_produtos_by_name(self, ref: str):
         return [v for v in self.__produtos.values() if ref.lower() in v.nome.lower()]
 
-    def add_produto(self, p:  Produto):
+    def add_produto(self, p: Produto):
         with self.__engine.connect() as conn:
-            data = {
-                "id_pro": p.id_pro,
-                "nome": p.nome,
-                "valor": p.valor
-            }
+            data = {"id_pro": p.id_pro, "nome": p.nome, "valor": p.valor}
             stmt = insert(self.__produtos_table).values(data)
 
             conn.execute(stmt)
@@ -47,8 +45,10 @@ class ProdutoRepository:
 
     def change_produto(self, id_prod: int, nome: str, valor: float):
         with self.__engine.connect() as conn:
-            stmt = update(self.__produtos_table).values(nome=nome, valor=valor).where(
-                self.__produtos_table.c.id_pro == id_prod
+            stmt = (
+                update(self.__produtos_table)
+                .values(nome=nome, valor=valor)
+                .where(self.__produtos_table.c.id_pro == id_prod)
             )
 
             conn.execute(stmt)
@@ -59,9 +59,7 @@ class ProdutoRepository:
 
     def del_produto(self, id_pro):
         with self.__engine.connect() as conn:
-            stmt = delete(self.__produtos_table).where(
-                self.__produtos_table.c.id_pro == id_pro
-            )
+            stmt = delete(self.__produtos_table).where(self.__produtos_table.c.id_pro == id_pro)
             conn.execute(stmt)
             conn.commit()
 
@@ -78,10 +76,8 @@ class ProdutoRepository:
                 self.__pedido_quantidade_produto_table.c.quantidade,
                 self.__pedido_quantidade_produto_table.c.id_pro,
                 self.__pedido_quantidade_produto_table.c.nome,
-                self.__pedido_quantidade_produto_table.c.valor_individual
-            ).where(
-                self.__pedido_quantidade_produto_table.c.id_ped == id_ped
-            )
+                self.__pedido_quantidade_produto_table.c.valor_individual,
+            ).where(self.__pedido_quantidade_produto_table.c.id_ped == id_ped)
             res = conn.execute(stmt)
             conn.commit()
         return [(p.quantidade, Produto(p.id_pro, p.nome, p.valor_individual)) for p in res]

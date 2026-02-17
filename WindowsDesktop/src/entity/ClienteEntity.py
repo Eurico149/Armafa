@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, Integer, String, MetaData
+from sqlalchemy import Column, Integer, MetaData, String, Table
 
 
 def get_clientes_entity(metadata: MetaData) -> Table:
@@ -15,7 +15,7 @@ def get_clientes_entity(metadata: MetaData) -> Table:
         Column("bairro", String(40)),
         Column("cpf_cnpj", String(14)),
         Column("fone", String(11)),
-        Column("email", String(80))
+        Column("email", String(80)),
     )
 
     return clientes

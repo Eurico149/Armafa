@@ -1,14 +1,13 @@
-import pytz
 from datetime import datetime
+
+import pytz
+
 from src.exception import ArmafaExeption
+from src.model import PDF_creator, Pdf_espelho, Pedido, Produto
 from src.repository import ClienteRepository, PedidoRepository
-from src.model import Pedido
-from src.model import PDF_creator, Pdf_espelho
-from src.model import Produto
 
 
 class Pedidos_controller:
-
     def __init__(self, pedido_repo: PedidoRepository, cliente_repo: ClienteRepository):
         self.__pedido_repo = pedido_repo
         self.__cliente_repo = cliente_repo
@@ -26,7 +25,7 @@ class Pedidos_controller:
             return False
         if not (31 >= int(d[0]) >= 1):
             return False
-        if not (4 == len(d[2])):
+        if 4 != len(d[2]):
             return False
         return True
 
@@ -48,8 +47,7 @@ class Pedidos_controller:
         try:
             self.__pedido_repo.add_pedido(Pedido(id_ped, cliente, date, p, desconto))
         except Exception as err:
-            raise ArmafaExeption("Erro Ao Cadastrar Pedido!")
-
+            raise ArmafaExeption("Erro Ao Cadastrar Pedido!") from err
 
     def change_pedido(self, id_ped: int, id_cli: str, date: str, p: list[tuple[int, Produto]], desconto: str) -> None:
         id_cli = id_cli.replace(" ", "").split("|")[0]
@@ -71,8 +69,8 @@ class Pedidos_controller:
         ped = Pedido(id_ped, cliente, date, p, desconto)
         try:
             self.__pedido_repo.change_pedido(ped)
-        except:
-            raise ArmafaExeption("Erro Ao Mudar Pedido!")
+        except Exception as err:
+            raise ArmafaExeption("Erro Ao Mudar Pedido!") from err
 
     def add_pro_pre(self, id_ped, produto: tuple[int, Produto]) -> None:
         self.__pedido_repo.add_pro_pre(id_ped, produto)
@@ -80,8 +78,8 @@ class Pedidos_controller:
     def del_pedido(self, id_ped: int) -> None:
         try:
             self.__pedido_repo.del_pedido(id_ped)
-        except:
-            raise ArmafaExeption("Erro Ao Deletar Pedido!")
+        except Exception as err:
+            raise ArmafaExeption("Erro Ao Deletar Pedido!") from err
 
     def get_pedidos(self, ref: str = "") -> list[Pedido]:
         if ref.isdigit():
@@ -100,7 +98,7 @@ class Pedidos_controller:
         return self.__pedido_repo.get_max_id() + 1
 
     def get_data_hoje(self) -> str:
-        formato = pytz.timezone('America/Sao_Paulo')
+        formato = pytz.timezone("America/Sao_Paulo")
         dt = datetime.now(formato)
         return dt.strftime("%d/%m/%Y")
 

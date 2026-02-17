@@ -1,12 +1,12 @@
 from tkinter import ttk
-from src import SystemRoot
+
 import customtkinter as ctk
 
+from src import SystemRoot
 from src.view.utils import convert_to_table_content
 
 
 class ContentFrame(ctk.CTkFrame):
-
     tree = None
     _search_bar = None
     _search_var = None
@@ -29,14 +29,16 @@ class ContentFrame(ctk.CTkFrame):
         self._search_var = ctk.StringVar()
         self._search_var.trace_add("write", self._on_search_change)
 
-        self._search_bar = ctk.CTkEntry(self,
-                                        fg_color="#EFEFEF",
-                                        text_color="#000000",
-                                        font=self.font,
-                                        corner_radius=8,
-                                        border_color="#000000",
-                                        border_width=1,
-                                        textvariable=self._search_var)
+        self._search_bar = ctk.CTkEntry(
+            self,
+            fg_color="#EFEFEF",
+            text_color="#000000",
+            font=self.font,
+            corner_radius=8,
+            border_color="#000000",
+            border_width=1,
+            textvariable=self._search_var,
+        )
         self._search_bar.grid(row=0, column=0, sticky="nsew", padx=20, pady=12)
 
         self._create_table(data)
@@ -71,7 +73,6 @@ class ContentFrame(ctk.CTkFrame):
 
         content = {}
         match self.__active_table:
-
             case "Pedidos":
                 data = self.__system_root.pedidos_controller.get_pedidos(texto)
                 content = convert_to_table_content(data_type=self.__active_table, data=data)
@@ -89,22 +90,25 @@ class ContentFrame(ctk.CTkFrame):
     def _generate_style(self):
         style = ttk.Style()
         style.theme_use("default")
-        style.configure("Treeview",
-                        background="#2a2d2e",
-                        foreground="white",
-                        rowheight=26,
-                        fieldbackground="#343638",
-                        bordercolor="#343638",
-                        borderwidth=0,
-                        font=("Cascadia Mono", 9))
-        style.map('Treeview', background=[('selected', '#22559b')])
-        style.configure("Treeview.Heading",
-                        background="#464a4d",
-                        foreground="white",
-                        relief="flat",
-                        font=("Cascadia Mono", 12, "bold"))
-        style.map("Treeview.Heading",
-                  background=[('active', '#3484F0')])
+        style.configure(
+            "Treeview",
+            background="#2a2d2e",
+            foreground="white",
+            rowheight=26,
+            fieldbackground="#343638",
+            bordercolor="#343638",
+            borderwidth=0,
+            font=("Cascadia Mono", 9),
+        )
+        style.map("Treeview", background=[("selected", "#22559b")])
+        style.configure(
+            "Treeview.Heading",
+            background="#464a4d",
+            foreground="white",
+            relief="flat",
+            font=("Cascadia Mono", 12, "bold"),
+        )
+        style.map("Treeview.Heading", background=[("active", "#3484F0")])
 
     def _grid_scheme_configure(self):
         self.grid_rowconfigure(0, weight=0)

@@ -1,11 +1,11 @@
-from sqlalchemy import delete, select, insert, update
+from sqlalchemy import delete, insert, select, update
+
+from src.entity import get_clientes_entity
 from src.model import Cliente
 from src.repository.DBConfig import DBConfig
-from src.entity import get_clientes_entity
 
 
 class ClienteRepository:
-
     def __init__(self, dbconfig: DBConfig):
         self.__clientes_table = get_clientes_entity(dbconfig.metadata)
         self.__engine = dbconfig.engine
@@ -33,13 +33,22 @@ class ClienteRepository:
             stmt = insert(self.__clientes_table).values(dados)
             conn.execute(stmt)
             conn.commit()
-        self.__clientes[c.id_cli] = Cliente(c.id_cli, c.nome, c.cep, c.endereco, c.uf, c.cidade, c.bairro, c.cpf_cnpj, c.fone, c.email)
+        self.__clientes[c.id_cli] = Cliente(
+            c.id_cli,
+            c.nome,
+            c.cep,
+            c.endereco,
+            c.uf,
+            c.cidade,
+            c.bairro,
+            c.cpf_cnpj,
+            c.fone,
+            c.email,
+        )
 
     def del_cliente(self, id_cli: int):
         with self.__engine.connect() as conn:
-            stmt = delete(self.__clientes_table).where(
-                self.__clientes_table.c.id_cli == id_cli
-            )
+            stmt = delete(self.__clientes_table).where(self.__clientes_table.c.id_cli == id_cli)
             conn.execute(stmt)
             conn.commit()
         del self.__clientes[id_cli]
@@ -48,9 +57,7 @@ class ClienteRepository:
         if c.id_cli in self.__clientes:
             with self.__engine.connect() as conn:
                 dados = {col: getattr(c, col) for col in self.__clientes_table.c.keys()}
-                stmt = update(self.__clientes_table).where(
-                    self.__clientes_table.c.id_cli == c.id_cli
-                ).values(dados)
+                stmt = update(self.__clientes_table).where(self.__clientes_table.c.id_cli == c.id_cli).values(dados)
                 conn.execute(stmt)
                 conn.commit()
             self.__clientes[c.id_cli] = c

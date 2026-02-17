@@ -7,3 +7,5 @@ build/
 Armafa.spec
 WindowsDesktop/pdfs/
 *.db
+.venv
+

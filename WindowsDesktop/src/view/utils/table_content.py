@@ -2,7 +2,6 @@ def convert_to_table_content(data_type: str, data: list):
     content = {}
 
     match data_type:
-
         case "Clientes":
             data.reverse()
             content = {
@@ -12,8 +11,8 @@ def convert_to_table_content(data_type: str, data: list):
                     "columns": [
                         {"name": "ID", "width": 35, "location": "center"},
                         {"name": "Nome", "width": "auto", "location": "w"},
-                    ]
-                }
+                    ],
+                },
             }
 
         case "Produtos":
@@ -23,7 +22,7 @@ def convert_to_table_content(data_type: str, data: list):
             for p in data:
                 texto = f"{p.valor:,.2f}"
                 texto = texto.replace(",", "X").replace(".", ",").replace("X", ".")
-                valor = f"R$ {(10 - len(texto)) * " "}{texto}"
+                valor = f"R$ {(10 - len(texto)) * ' '}{texto}"
                 dto.append((p.id_pro, p.nome, valor))
 
             content = {
@@ -33,9 +32,9 @@ def convert_to_table_content(data_type: str, data: list):
                     "columns": [
                         {"name": "ID", "width": 35, "location": "center"},
                         {"name": "Nome", "width": "auto", "location": "w"},
-                        {"name": "Valor", "width": 100, "location": "w"}
-                    ]
-                }
+                        {"name": "Valor", "width": 100, "location": "w"},
+                    ],
+                },
             }
 
         case "Pedidos":
@@ -45,7 +44,7 @@ def convert_to_table_content(data_type: str, data: list):
             for p in data:
                 texto = f"{p.valor_total:,.2f}"
                 texto = texto.replace(",", "X").replace(".", ",").replace("X", ".")
-                valor_total = f"R$ {(10 - len(texto)) * " "}{texto}"
+                valor_total = f"R$ {(10 - len(texto)) * ' '}{texto}"
                 dto.append((p.id_ped, p.data, p.cliente.nome, valor_total))
 
             content = {
@@ -56,9 +55,9 @@ def convert_to_table_content(data_type: str, data: list):
                         {"name": "ID", "width": 35, "location": "center"},
                         {"name": "Data", "width": 80, "location": "center"},
                         {"name": "Cliente", "width": "auto", "location": "w"},
-                        {"name": "Total", "width": 100, "location": "w"}
-                    ]
-                }
+                        {"name": "Total", "width": 100, "location": "w"},
+                    ],
+                },
             }
 
     return content
